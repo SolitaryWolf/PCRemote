@@ -1,0 +1,134 @@
+package com.group3.pcremote;
+
+import java.util.ArrayList;
+
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.group3.pcremote.adapter.HistoryAdapter;
+import com.group3.pcremote.adapter.ServerInfoAdapter;
+import com.group3.pcremote.api.ProcessReceiveUDPPacket;
+import com.group3.pcremote.api.ProcessSendUDPPacket;
+import com.group3.pcremote.broadcast.WifiReceiver;
+import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.model.SenderData;
+import com.group3.pcremote.model.ServerInfo;
+import com.group3.pcremote.projectinterface.ServerInfoInterface;
+import com.group3.pcremote.projectinterface.WifiInfoInterface;
+
+public class FragmentControl extends Fragment implements WifiInfoInterface,
+		ServerInfoInterface {
+
+	// wifi change part
+	private TextView tvNetWorkConnection;
+	private BroadcastReceiver broadcastRecWifiChange = null;
+
+	// list server info
+	private ListView lvAvailableDevice;
+	private ArrayList<ServerInfo> mALServerInfo;
+	private ServerInfoAdapter mServerInfoAdaper;
+
+	// list history
+	private ListView lvHistory;
+	private ArrayList<ServerInfo> mALHistory;
+	private HistoryAdapter mHistoryAdapter;
+
+	// process
+	private ProcessSendUDPPacket processSendUDPPacket = null;
+	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_layout_control,
+				container, false);
+
+		getFormWidgets(rootView);
+		addEventToFormWidget(rootView);
+
+		receiveBroadcastWifiChange();
+
+		// new UDPClient(FragmentControl.this, "Get PC info").execute();
+		// new ConnectedPCsInfo().execute();
+
+		return rootView;
+	}
+
+	private void getFormWidgets(View rootView) {
+		tvNetWorkConnection = (TextView) rootView
+				.findViewById(R.id.tvNetworkConnection);
+
+		// list server info
+		lvAvailableDevice = (ListView) rootView
+				.findViewById(R.id.lvAvailableDevice);
+		mALServerInfo = new ArrayList<ServerInfo>();
+		mServerInfoAdaper = new ServerInfoAdapter(this,
+				R.layout.custom_listview_serverinfo, mALServerInfo);
+		lvAvailableDevice.setAdapter(mServerInfoAdaper);
+
+	}
+
+	private void addEventToFormWidget(View rootView) {
+
+	}
+
+	// ===========Wifi change=========================================//
+	/*
+	 * mỗi khi get đc thông tin wifi thì tiến hành update UI
+	 */
+	@Override
+	public void onGetWifiInfoDone(String wifiName) {
+		if (wifiName != "")
+			tvNetWorkConnection.setText("Wifi: "
+					+ wifiName.substring(1, wifiName.length() - 1));
+		else
+			tvNetWorkConnection.setText("No network found");
+
+		if (processSendUDPPacket != null && !processSendUDPPacket.isCancelled())
+			processSendUDPPacket.cancel(true);
+		if (processReceiveUDPacket != null
+				&& !processReceiveUDPacket.isCancelled())
+			processReceiveUDPacket.cancel(true);
+		mALServerInfo.clear();
+		mServerInfoAdaper.notifyDataSetChanged();
+		// gửi broadcast cho các máy trong cùng mạng
+		if (wifiName != "") {
+			SenderData senderData = new SenderData();
+			senderData.setCommand(SocketConstant.SERVER_INFO);
+
+			processSendUDPPacket = new ProcessSendUDPPacket(
+					FragmentControl.this, senderData);
+			processSendUDPPacket.execute();
+			processReceiveUDPacket = new ProcessReceiveUDPPacket(
+					FragmentControl.this, FragmentControl.this);
+			processReceiveUDPacket.execute();
+		}
+	}
+
+	/*
+	 * bắt sự kiện mỗi khi trạng thái wifi thay đổi
+	 */
+	private void receiveBroadcastWifiChange() {
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+		broadcastRecWifiChange = new WifiReceiver(this);
+
+		getActivity().registerReceiver(broadcastRecWifiChange, intentFilter);
+	}
+
+	// =================================================================//
+
+	@Override
+	public void onGetServerInfoDone(ServerInfo serverInfo) {
+		mALServerInfo.add(serverInfo);
+		mServerInfoAdaper.notifyDataSetChanged();
+	}
+
+}
