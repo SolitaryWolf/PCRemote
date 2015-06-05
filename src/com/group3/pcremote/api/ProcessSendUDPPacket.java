@@ -17,12 +17,13 @@ import android.util.Log;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 
-public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {	
+public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
 	private DatagramSocket mDatagramSoc = null;
 
-	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData, DatagramSocket mDatagramSocket) {
+	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
+			DatagramSocket mDatagramSocket) {
 		this.mSenderData = mSenderData;
 		this.mContext = mContext;
 		this.mDatagramSoc = mDatagramSocket;
@@ -32,23 +33,24 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(Void... params) {
 		try {
 			mDatagramSoc.setBroadcast(true);
-			
+
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream(6400);
 			final ObjectOutputStream oos = new ObjectOutputStream(baos);
 			oos.writeObject(mSenderData);
 			final byte[] data = baos.toByteArray();
-		
-			DatagramPacket packet = new DatagramPacket(data,
-					data.length, getBroadcastAddress(), SocketConstant.PORT);
-			while (true)
-			{
+
+			DatagramPacket packet = new DatagramPacket(data, data.length,
+					getBroadcastAddress(), SocketConstant.PORT);
+			while (true) {
 				mDatagramSoc.send(packet);
 				Thread.sleep(5000);
 			}
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
+			Log.e("Socket", e.getMessage());
+		} catch (InterruptedException e) {
 			Log.e("Socket", e.getMessage());
 		} finally {
-			if (mDatagramSoc != null)		
+			if (mDatagramSoc != null)
 				mDatagramSoc.close();
 		}
 		return null;
