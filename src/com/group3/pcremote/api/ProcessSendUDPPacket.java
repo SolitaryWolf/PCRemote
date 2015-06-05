@@ -43,15 +43,15 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 					getBroadcastAddress(), SocketConstant.PORT);
 			while (true) {
 				mDatagramSoc.send(packet);
-				Thread.sleep(5000);
+				Thread.sleep(1000);
 			}
 		} catch (IOException e) {
 			Log.e("Socket", e.getMessage());
 		} catch (InterruptedException e) {
 			Log.e("Socket", e.getMessage());
 		} finally {
-			if (mDatagramSoc != null)
-				mDatagramSoc.close();
+/*			if (mDatagramSoc != null)
+				mDatagramSoc.close();*/
 		}
 		return null;
 	}

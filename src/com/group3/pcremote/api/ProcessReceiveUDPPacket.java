@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -40,7 +39,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 /*			mDatagramSoc.setReuseAddress(true);
 		    mDatagramSoc.bind(new InetSocketAddress(SocketConstant.PORT));*/
 		    
-			byte[] buffer = new byte[6000];
+			byte[] buffer = new byte[6400];
 			DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 			ByteArrayInputStream baos = null;
 			ObjectInputStream ois = null;
@@ -50,8 +49,10 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
 				mSenderData = (SenderData) ois.readObject();
-
+				Log.d("Socket", mSenderData.getCommand());
 				if (mSenderData.getCommand().equals(SocketConstant.SERVER_INFO)) {
+					/*Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerIP());
+					Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerName());*/
 					if (mSenderData.getData() instanceof ServerInfo) {
 						ServerInfo sInfo = new ServerInfo();
 						sInfo.setServerIP(pk.getAddress().getHostName());
@@ -67,8 +68,8 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 		} catch (ClassNotFoundException e) {
 			Log.d("Socket", e.getMessage());
 		} finally {
-			if (mDatagramSoc != null)
-				mDatagramSoc.close();
+/*			if (mDatagramSoc != null)
+				mDatagramSoc.close();*/
 
 		}
 		return null;

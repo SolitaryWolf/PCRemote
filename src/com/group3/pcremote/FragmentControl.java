@@ -138,6 +138,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	public void sendBroadcast() {
 		SenderData senderData = new SenderData();
 		senderData.setCommand(SocketConstant.SERVER_INFO);
+		
+		
+		
+		
+		
 
 		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
 				senderData, mDatagramSoc);
