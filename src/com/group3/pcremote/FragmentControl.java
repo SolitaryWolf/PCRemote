@@ -1,9 +1,13 @@
 package com.group3.pcremote;
 
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -44,6 +48,9 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ProcessSendUDPPacket processSendUDPPacket = null;
 	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
 
+	// socket
+	private DatagramSocket mDatagramSoc = null;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -73,6 +80,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 				R.layout.custom_listview_serverinfo, mALServerInfo);
 		lvAvailableDevice.setAdapter(mServerInfoAdaper);
 
+		try {
+			mDatagramSoc = new DatagramSocket(SocketConstant.PORT);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addEventToFormWidget(View rootView) {
@@ -98,18 +110,10 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 			processReceiveUDPacket.cancel(true);
 		mALServerInfo.clear();
 		mServerInfoAdaper.notifyDataSetChanged();
-		// gửi broadcast cho các máy trong cùng mạng
-		if (wifiName != "") {
-			SenderData senderData = new SenderData();
-			senderData.setCommand(SocketConstant.SERVER_INFO);
 
-			processSendUDPPacket = new ProcessSendUDPPacket(
-					FragmentControl.this, senderData);
-			processSendUDPPacket.execute();
-			processReceiveUDPacket = new ProcessReceiveUDPPacket(
-					FragmentControl.this, FragmentControl.this);
-			processReceiveUDPacket.execute();
-		}
+		// gửi broadcast cho các máy trong cùng mạng
+		if (wifiName != "")
+			sendBroadcast();
 	}
 
 	/*
@@ -131,4 +135,19 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
 
+	public void sendBroadcast() {
+		SenderData senderData = new SenderData();
+		senderData.setCommand(SocketConstant.SERVER_INFO);
+
+		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
+				senderData, mDatagramSoc);
+		processSendUDPPacket.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+		processReceiveUDPacket = new ProcessReceiveUDPPacket(
+				FragmentControl.this, FragmentControl.this, mDatagramSoc);
+
+		processReceiveUDPacket
+				.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+	}
 }

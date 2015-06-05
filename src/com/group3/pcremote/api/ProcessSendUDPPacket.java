@@ -12,6 +12,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
@@ -19,18 +20,18 @@ import com.group3.pcremote.model.SenderData;
 public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {	
 	private SenderData mSenderData = null;
 	private Fragment mContext;
+	private DatagramSocket mDatagramSoc = null;
 
-	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData) {
+	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData, DatagramSocket mDatagramSocket) {
 		this.mSenderData = mSenderData;
 		this.mContext = mContext;
+		this.mDatagramSoc = mDatagramSocket;
 	}
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		DatagramSocket socket = null;
 		try {
-			socket = new DatagramSocket(SocketConstant.PORT);
-			socket.setBroadcast(true);
+			mDatagramSoc.setBroadcast(true);
 			
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream(6400);
 			final ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -39,15 +40,16 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 		
 			DatagramPacket packet = new DatagramPacket(data,
 					data.length, getBroadcastAddress(), SocketConstant.PORT);
-			socket.send(packet);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (socket != null)
+			while (true)
 			{
-				socket.disconnect();
-				socket.close();
+				mDatagramSoc.send(packet);
+				Thread.sleep(5000);
 			}
+		} catch (IOException | InterruptedException e) {
+			Log.e("Socket", e.getMessage());
+		} finally {
+			if (mDatagramSoc != null)		
+				mDatagramSoc.close();
 		}
 		return null;
 	}

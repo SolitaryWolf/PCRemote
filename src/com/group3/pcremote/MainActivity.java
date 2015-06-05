@@ -35,6 +35,9 @@ public class MainActivity extends FragmentActivity {
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 
+	//điều khiển menu trên action bar
+    public static boolean mIsHiddenMenu = false; // mới vô hiện option menu
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -187,6 +190,18 @@ public class MainActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		
+		if (mIsHiddenMenu == true)
+	    {
+	        for (int i = 0; i < menu.size(); i++)
+	            menu.getItem(i).setVisible(false);
+	    }
+	    else
+	    {
+	        for (int i = 0; i < menu.size(); i++)
+	            menu.getItem(i).setVisible(true);
+	    }
+	    
 		return true;
 	}
 
@@ -196,7 +211,13 @@ public class MainActivity extends FragmentActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_refresh) {
+			Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_frame); //lấy fragment hiện tại
+			if (f instanceof FragmentControl) 
+			{
+				((FragmentControl) f).sendBroadcast();
+		        
+			}
 			return true;
 		}
 		// The action bar home/up action should open or close the drawer.

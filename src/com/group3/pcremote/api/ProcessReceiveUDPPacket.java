@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -24,25 +25,28 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
 	private ServerInfoInterface mServerInfoInterface;
+	private DatagramSocket mDatagramSoc = null;
 
 	public ProcessReceiveUDPPacket(Fragment mContext,
-			ServerInfoInterface mServerInfoInterface) {
+			ServerInfoInterface mServerInfoInterface, DatagramSocket mDatagramSoc) {
 		this.mContext = mContext;
 		this.mServerInfoInterface = mServerInfoInterface;
+		this.mDatagramSoc = mDatagramSoc;
 	}
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		DatagramSocket socket = null;
 		try {
-			DatagramSocket dsk = new DatagramSocket(SocketConstant.PORT);
+/*			mDatagramSoc.setReuseAddress(true);
+		    mDatagramSoc.bind(new InetSocketAddress(SocketConstant.PORT));*/
+		    
 			byte[] buffer = new byte[6000];
 			DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 			ByteArrayInputStream baos = null;
 			ObjectInputStream ois = null;
 
 			while (true) {
-				dsk.receive(pk);
+				mDatagramSoc.receive(pk);
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
 				mSenderData = (SenderData) ois.readObject();
@@ -59,14 +63,12 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.d("Socket", e.getMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			Log.d("Socket", e.getMessage());
 		} finally {
-			if (socket != null) {
-				socket.disconnect();
-				socket.close();
-			}
+			if (mDatagramSoc != null)
+				mDatagramSoc.close();
 
 		}
 		return null;
@@ -77,6 +79,9 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 		mServerInfoInterface.onGetServerInfoDone(values[0]);
 	}
 
+	/*
+	 * method trả về địa chỉ broad cast của mạng wifi đang kết nối
+	 */
 	InetAddress getBroadcastAddress() throws IOException {
 		WifiManager wifi = (WifiManager) mContext.getActivity()
 				.getSystemService(Context.WIFI_SERVICE);
