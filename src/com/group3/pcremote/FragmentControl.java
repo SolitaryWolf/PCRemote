@@ -146,11 +146,16 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	@Override
 	public void onGetServerInfoDone(ServerInfo serverInfo) {
-		for (ServerInfo sInfo :mALServerInfo)
+		if (mALServerInfo.size() > 0)
 		{
-			if (sInfo.getServerIP() != serverInfo.getServerIP())
-				mALServerInfo.add(serverInfo);
+			for (ServerInfo sInfo :mALServerInfo)
+			{
+				if (sInfo.getServerIP() != serverInfo.getServerIP())
+					mALServerInfo.add(serverInfo);
+			}
 		}
+		else
+			mALServerInfo.add(serverInfo);
 			
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
