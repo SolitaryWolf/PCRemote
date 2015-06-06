@@ -149,7 +149,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	public void onGetServerInfoDone(ServerInfo serverInfo) {
 		if (mALServerInfo.size() > 0) {
 			for (ServerInfo sInfo : mALServerInfo) {
-				if (sInfo.getServerIP() == serverInfo.getServerIP())
+				if (sInfo.getServerIP().equals(serverInfo.getServerIP()))
 					return;
 			}
 
