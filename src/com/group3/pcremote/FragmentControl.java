@@ -89,15 +89,16 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	}
 
 	private void addEventToFormWidget(View rootView) {
-		lvAvailableDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		lvAvailableDevice
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				
-			}
-			
-		});
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+
+					}
+
+				});
 	}
 
 	// ===========Wifi change=========================================//
@@ -119,7 +120,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		if (processReceiveUDPacket != null
 				&& !processReceiveUDPacket.isCancelled())
 			processReceiveUDPacket.cancel(false);
-		
+
 		// reset list available device
 		refreshAvailableDeviceList();
 
@@ -146,17 +147,15 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	@Override
 	public void onGetServerInfoDone(ServerInfo serverInfo) {
-		if (mALServerInfo.size() > 0)
-		{
-			for (ServerInfo sInfo :mALServerInfo)
-			{
+		if (mALServerInfo.size() > 0) {
+			for (ServerInfo sInfo : mALServerInfo) {
 				if (sInfo.getServerIP() == serverInfo.getServerIP())
 					return;
 			}
+
 		}
-		else
-			mALServerInfo.add(serverInfo);
-			
+		mALServerInfo.add(serverInfo);
+
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
 
@@ -196,9 +195,8 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mALServerInfo.clear();
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
-	
-	private void sendRequestConnect()
-	{
+
+	private void sendRequestConnect() {
 		SenderData senderData = new SenderData();
 		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
 
