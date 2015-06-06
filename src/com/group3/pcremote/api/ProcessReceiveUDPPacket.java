@@ -45,7 +45,10 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 				mDatagramSoc.receive(pk);
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
-				mSenderData = (SenderData) ois.readObject();
+				
+				Object receiverData = ois.readObject();
+				if (receiverData !=null && receiverData instanceof SenderData)
+					mSenderData = (SenderData) receiverData;
 				Log.d("Socket", mSenderData.getCommand());
 				if (mSenderData.getCommand().equals(SocketConstant.RESPONSE_SERVER_INFO)) {
 					/*Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerIP());

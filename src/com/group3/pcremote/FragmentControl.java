@@ -158,9 +158,6 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			processSendUDPPacket.execute();
-
-		
-
 	}
 	
 	/*
