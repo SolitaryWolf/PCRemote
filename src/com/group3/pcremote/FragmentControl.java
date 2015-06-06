@@ -102,18 +102,25 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					+ wifiName.substring(1, wifiName.length() - 1));
 		else
 			tvNetWorkConnection.setText("No network found");
-
+		
+		// mỗi khi wifi change thì dừng các thread lại
 		if (processSendUDPPacket != null && !processSendUDPPacket.isCancelled())
 			processSendUDPPacket.cancel(true);
 		if (processReceiveUDPacket != null
 				&& !processReceiveUDPacket.isCancelled())
 			processReceiveUDPacket.cancel(true);
+		
+		//reset list available device
 		mALServerInfo.clear();
 		mServerInfoAdaper.notifyDataSetChanged();
 
-		// gửi broadcast cho các máy trong cùng mạng
+		// gửi broadcast cho các máy trong cùng mạng 
+		// và tiến hành nhận thông tin từ server
 		if (wifiName != "")
+		{
 			sendBroadcast();
+			receiveDataFromServer();
+		}
 	}
 
 	/*
@@ -134,25 +141,39 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mALServerInfo.add(serverInfo);
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
-
+	
+	/*
+	 * send broadcast đến các máy trong cùng mạng wifi
+	 */
 	public void sendBroadcast() {
 		SenderData senderData = new SenderData();
-		senderData.setCommand(SocketConstant.SERVER_INFO);
+		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
 		
-		
-		
-		
-		
-
 		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
 				senderData, mDatagramSoc);
-		processSendUDPPacket.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên 
+		// nếu muốn chạy song song phải dùng AsyncTask.THREAD_POOL_EXECUTOR
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			processSendUDPPacket
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			processSendUDPPacket.execute();
 
+		
+
+	}
+	
+	/*
+	 * nhận data từ servers
+	 */
+	public void receiveDataFromServer()
+	{
 		processReceiveUDPacket = new ProcessReceiveUDPPacket(
 				FragmentControl.this, FragmentControl.this, mDatagramSoc);
-
-		processReceiveUDPacket
-				.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			processReceiveUDPacket
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			processReceiveUDPacket.execute();
 	}
 }

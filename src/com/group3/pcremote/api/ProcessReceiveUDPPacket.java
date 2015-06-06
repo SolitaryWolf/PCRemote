@@ -35,10 +35,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		try {
-/*			mDatagramSoc.setReuseAddress(true);
-		    mDatagramSoc.bind(new InetSocketAddress(SocketConstant.PORT));*/
-		    
+		try {  
 			byte[] buffer = new byte[6400];
 			DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 			ByteArrayInputStream baos = null;
@@ -50,7 +47,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 				ois = new ObjectInputStream(baos);
 				mSenderData = (SenderData) ois.readObject();
 				Log.d("Socket", mSenderData.getCommand());
-				if (mSenderData.getCommand().equals(SocketConstant.SERVER_INFO)) {
+				if (mSenderData.getCommand().equals(SocketConstant.RESPONSE_SERVER_INFO)) {
 					/*Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerIP());
 					Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerName());*/
 					if (mSenderData.getData() instanceof ServerInfo) {
@@ -67,11 +64,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 			Log.d("Socket", e.getMessage());
 		} catch (ClassNotFoundException e) {
 			Log.d("Socket", e.getMessage());
-		} finally {
-/*			if (mDatagramSoc != null)
-				mDatagramSoc.close();*/
-
-		}
+		} 
 		return null;
 	}
 

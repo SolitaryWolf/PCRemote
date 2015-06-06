@@ -20,7 +20,10 @@ import com.group3.pcremote.model.SenderData;
 public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
-	private DatagramSocket mDatagramSoc = null;
+	//lý do phải để DatagramSocket vào hàm tạo bởi vì socket khi
+	// đc tạo gắn với 1 port cho đến lúc close nên nếu tạo instance mới
+	// nhiều lần sẽ bị lỗi Socket EADDRINUSE (Address already in use)
+	private DatagramSocket mDatagramSoc = null; 
 
 	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket) {
@@ -49,9 +52,6 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 			Log.e("Socket", e.getMessage());
 		} catch (InterruptedException e) {
 			Log.e("Socket", e.getMessage());
-		} finally {
-/*			if (mDatagramSoc != null)
-				mDatagramSoc.close();*/
 		}
 		return null;
 	}
