@@ -27,7 +27,8 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 	private DatagramSocket mDatagramSoc = null;
 
 	public ProcessReceiveUDPPacket(Fragment mContext,
-			ServerInfoInterface mServerInfoInterface, DatagramSocket mDatagramSoc) {
+			ServerInfoInterface mServerInfoInterface,
+			DatagramSocket mDatagramSoc) {
 		this.mContext = mContext;
 		this.mServerInfoInterface = mServerInfoInterface;
 		this.mDatagramSoc = mDatagramSoc;
@@ -35,24 +36,29 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		try {  
+		try {
 			byte[] buffer = new byte[6400];
 			DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 			ByteArrayInputStream baos = null;
 			ObjectInputStream ois = null;
 
-			while (true) {
+			while (!isCancelled()) {
 				mDatagramSoc.receive(pk);
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
-				
+
 				Object receiverData = ois.readObject();
-				if (receiverData !=null && receiverData instanceof SenderData)
+				if (receiverData != null && receiverData instanceof SenderData)
 					mSenderData = (SenderData) receiverData;
 				Log.d("Socket", mSenderData.getCommand());
-				if (mSenderData.getCommand().equals(SocketConstant.RESPONSE_SERVER_INFO)) {
-					/*Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerIP());
-					Log.d("Socket", ((ServerInfo)mSenderData.getData()).getServerName());*/
+				if (mSenderData.getCommand().equals(
+						SocketConstant.RESPONSE_SERVER_INFO)) {
+					/*
+					 * Log.d("Socket",
+					 * ((ServerInfo)mSenderData.getData()).getServerIP());
+					 * Log.d("Socket",
+					 * ((ServerInfo)mSenderData.getData()).getServerName());
+					 */
 					if (mSenderData.getData() instanceof ServerInfo) {
 						ServerInfo sInfo = new ServerInfo();
 						sInfo.setServerIP(pk.getAddress().getHostName());
@@ -67,13 +73,15 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 			Log.d("Socket", e.getMessage());
 		} catch (ClassNotFoundException e) {
 			Log.d("Socket", e.getMessage());
-		} 
+		}
 		return null;
 	}
 
 	@Override
 	protected void onProgressUpdate(ServerInfo... values) {
-		mServerInfoInterface.onGetServerInfoDone(values[0]);
+		Log.d("Socket", "Update UI is called");
+		if (values[0] != null)
+			mServerInfoInterface.onGetServerInfoDone(values[0]);
 	}
 
 	/*

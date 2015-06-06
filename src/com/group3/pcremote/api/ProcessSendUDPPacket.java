@@ -20,10 +20,10 @@ import com.group3.pcremote.model.SenderData;
 public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
-	//lý do phải để DatagramSocket vào hàm tạo bởi vì socket khi
+	// lý do phải để DatagramSocket vào hàm tạo bởi vì socket khi
 	// đc tạo gắn với 1 port cho đến lúc close nên nếu tạo instance mới
 	// nhiều lần sẽ bị lỗi Socket EADDRINUSE (Address already in use)
-	private DatagramSocket mDatagramSoc = null; 
+	private DatagramSocket mDatagramSoc = null;
 
 	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket) {
@@ -34,24 +34,28 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		try {
-			mDatagramSoc.setBroadcast(true);
+		if (!isCancelled()) {
+			try {
+				Log.d("Socket", "ProcessSendUDPPacket is called");
+				mDatagramSoc.setBroadcast(true);
+				
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream(
+						6400);
+				final ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(mSenderData);
+				final byte[] data = baos.toByteArray();
 
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream(6400);
-			final ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(mSenderData);
-			final byte[] data = baos.toByteArray();
-
-			DatagramPacket packet = new DatagramPacket(data, data.length,
-					getBroadcastAddress(), SocketConstant.PORT);
-			while (true) {
-				mDatagramSoc.send(packet);
-				Thread.sleep(1000);
+				DatagramPacket packet = new DatagramPacket(data, data.length,
+						getBroadcastAddress(), SocketConstant.PORT);
+				while (true) {
+					mDatagramSoc.send(packet);
+					Thread.sleep(1000);
+				}
+			} catch (IOException e) {
+				Log.e("Socket", e.getMessage());
+			} catch (InterruptedException e) {
+				Log.e("Socket", e.getMessage());
 			}
-		} catch (IOException e) {
-			Log.e("Socket", e.getMessage());
-		} catch (InterruptedException e) {
-			Log.e("Socket", e.getMessage());
 		}
 		return null;
 	}

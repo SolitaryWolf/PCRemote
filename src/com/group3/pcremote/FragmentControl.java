@@ -105,10 +105,10 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		
 		// mỗi khi wifi change thì dừng các thread lại
 		if (processSendUDPPacket != null && !processSendUDPPacket.isCancelled())
-			processSendUDPPacket.cancel(true);
+			processSendUDPPacket.cancel(false); //true thì ngắt ngang, false thì đợi thread hoàn thành
 		if (processReceiveUDPacket != null
 				&& !processReceiveUDPacket.isCancelled())
-			processReceiveUDPacket.cancel(true);
+			processReceiveUDPacket.cancel(false);
 		
 		//reset list available device
 		mALServerInfo.clear();
