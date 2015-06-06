@@ -50,7 +50,7 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 
 				DatagramPacket packet = new DatagramPacket(data, data.length,
 						getBroadcastAddress(), SocketConstant.PORT);
-				while (true) {
+				while (!isCancelled()) {
 					publishProgress();
 					mDatagramSoc.send(packet);
 					Thread.sleep(4000);
