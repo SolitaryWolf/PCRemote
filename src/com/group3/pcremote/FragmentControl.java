@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -88,7 +89,15 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	}
 
 	private void addEventToFormWidget(View rootView) {
+		lvAvailableDevice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+			}
+			
+		});
 	}
 
 	// ===========Wifi change=========================================//
@@ -102,22 +111,21 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					+ wifiName.substring(1, wifiName.length() - 1));
 		else
 			tvNetWorkConnection.setText("No network found");
-		
+
 		// mỗi khi wifi change thì dừng các thread lại
 		if (processSendUDPPacket != null && !processSendUDPPacket.isCancelled())
-			processSendUDPPacket.cancel(false); //true thì ngắt ngang, false thì đợi thread hoàn thành
+			processSendUDPPacket.cancel(false); // true thì ngắt ngang, false
+												// thì đợi thread hoàn thành
 		if (processReceiveUDPacket != null
 				&& !processReceiveUDPacket.isCancelled())
 			processReceiveUDPacket.cancel(false);
 		
-		//reset list available device
-		mALServerInfo.clear();
-		mServerInfoAdaper.notifyDataSetChanged();
+		// reset list available device
+		refreshAvailableDeviceList();
 
-		// gửi broadcast cho các máy trong cùng mạng 
+		// gửi broadcast cho các máy trong cùng mạng
 		// và tiến hành nhận thông tin từ server
-		if (wifiName != "")
-		{
+		if (wifiName != "") {
 			sendBroadcast();
 			receiveDataFromServer();
 		}
@@ -141,17 +149,17 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mALServerInfo.add(serverInfo);
 		mServerInfoAdaper.notifyDataSetChanged();
 	}
-	
+
 	/*
 	 * send broadcast đến các máy trong cùng mạng wifi
 	 */
 	public void sendBroadcast() {
 		SenderData senderData = new SenderData();
 		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
-		
+
 		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
 				senderData, mDatagramSoc);
-		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên 
+		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên
 		// nếu muốn chạy song song phải dùng AsyncTask.THREAD_POOL_EXECUTOR
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			processSendUDPPacket
@@ -159,12 +167,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		else
 			processSendUDPPacket.execute();
 	}
-	
+
 	/*
 	 * nhận data từ servers
 	 */
-	public void receiveDataFromServer()
-	{
+	public void receiveDataFromServer() {
 		processReceiveUDPacket = new ProcessReceiveUDPPacket(
 				FragmentControl.this, FragmentControl.this, mDatagramSoc);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -172,5 +179,27 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			processReceiveUDPacket.execute();
+	}
+
+	public void refreshAvailableDeviceList() {
+		// reset list available device
+		mALServerInfo.clear();
+		mServerInfoAdaper.notifyDataSetChanged();
+	}
+	
+	private void sendRequestConnect()
+	{
+		SenderData senderData = new SenderData();
+		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
+
+		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
+				senderData, mDatagramSoc);
+		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên
+		// nếu muốn chạy song song phải dùng AsyncTask.THREAD_POOL_EXECUTOR
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			processSendUDPPacket
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			processSendUDPPacket.execute();
 	}
 }

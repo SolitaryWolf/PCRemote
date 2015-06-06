@@ -12,6 +12,7 @@
 
         <TextView
             android:id="@+id/tvServerName"
+            style="@android:style/TextAppearance.DeviceDefault.Large"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -19,6 +20,7 @@
 
         <TextView
             android:id="@+id/tvServerIP"
+            style="@android:style/TextAppearance.DeviceDefault.Large"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

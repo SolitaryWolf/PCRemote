@@ -14,6 +14,8 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.group3.pcremote.FragmentControl;
+import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 
@@ -36,7 +38,8 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(Void... params) {
 		if (!isCancelled()) {
 			try {
-				Log.d("Socket", "ProcessSendUDPPacket is called");
+				//Log.d("Socket", "ProcessSendUDPPacket is called");			
+
 				mDatagramSoc.setBroadcast(true);
 				
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream(
@@ -48,8 +51,9 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 				DatagramPacket packet = new DatagramPacket(data, data.length,
 						getBroadcastAddress(), SocketConstant.PORT);
 				while (true) {
+					publishProgress();
 					mDatagramSoc.send(packet);
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				}
 			} catch (IOException e) {
 				Log.e("Socket", e.getMessage());
@@ -59,7 +63,20 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 		}
 		return null;
 	}
+	
+	
+	
+	@Override
+	protected void onProgressUpdate(Void... values) {
+		super.onProgressUpdate(values);
+		Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(R.id.content_frame); //lấy fragment hiện tại
+		if (f instanceof FragmentControl) 
+			((FragmentControl) f).refreshAvailableDeviceList();
+	}
 
+	/*
+	 * method get broadcast address
+	 */
 	InetAddress getBroadcastAddress() throws IOException {
 		WifiManager wifi = (WifiManager) mContext.getActivity()
 				.getSystemService(Context.WIFI_SERVICE);
