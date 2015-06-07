@@ -50,10 +50,10 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 
 				DatagramPacket packet = new DatagramPacket(data, data.length,
 						getBroadcastAddress(), SocketConstant.PORT);
-				while (!isCancelled()) {
-					publishProgress();
+				while (!isCancelled()) {					
 					mDatagramSoc.send(packet);
-					Thread.sleep(4000);
+					Thread.sleep(2000);
+					publishProgress();
 				}
 			} catch (IOException e) {
 				Log.e("Socket", e.getMessage());
@@ -71,7 +71,7 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 		super.onProgressUpdate(values);
 		Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(R.id.content_frame); //lấy fragment hiện tại
 		if (f instanceof FragmentControl) 
-			((FragmentControl) f).refreshAvailableDeviceList();
+			((FragmentControl) f).updateAvailableDeviceList();
 	}
 
 	/*

@@ -39,6 +39,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ListView lvAvailableDevice;
 	private ArrayList<ServerInfo> mALServerInfo;
 	private ServerInfoAdapter mServerInfoAdaper;
+	private ArrayList<ServerInfo> mALServerInfoTemp;
 
 	// list history
 	private ListView lvHistory;
@@ -77,6 +78,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		lvAvailableDevice = (ListView) rootView
 				.findViewById(R.id.lvAvailableDevice);
 		mALServerInfo = new ArrayList<ServerInfo>();
+		mALServerInfoTemp = new ArrayList<ServerInfo>();
 		mServerInfoAdaper = new ServerInfoAdapter(this,
 				R.layout.custom_listview_serverinfo, mALServerInfo);
 		lvAvailableDevice.setAdapter(mServerInfoAdaper);
@@ -147,16 +149,14 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	@Override
 	public void onGetServerInfoDone(ServerInfo serverInfo) {
-		if (mALServerInfo.size() > 0) {
-			for (ServerInfo sInfo : mALServerInfo) {
+		if (mALServerInfoTemp.size() > 0) {
+			for (ServerInfo sInfo : mALServerInfoTemp) {
 				if (sInfo.getServerIP().equals(serverInfo.getServerIP()))
 					return;
 			}
 
 		}
-		mALServerInfo.add(serverInfo);
-
-		mServerInfoAdaper.notifyDataSetChanged();
+		mALServerInfoTemp.add(serverInfo);
 	}
 
 	/*
@@ -209,5 +209,55 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			processSendUDPPacket.execute();
+	}
+	
+	public void updateAvailableDeviceList()
+	{
+		boolean isDelected = true;
+		boolean isAdded = true;
+		if (mALServerInfo.size() == 0)
+			mALServerInfo.addAll(mALServerInfoTemp);
+		
+		else if ( mALServerInfo.size() > 0 && mALServerInfoTemp.size() > 0)
+		{
+			// remove những device ko thấy kết nối
+			for (int i = 0 ; i < mALServerInfo.size() ; i++)
+			{
+				isDelected = true;
+				for (int j = 0 ; j < mALServerInfoTemp.size() ; j++)
+				{
+					if (mALServerInfo.get(i).getServerIP().equals(mALServerInfoTemp.get(j).getServerIP()))
+					{
+						isDelected = false;
+						break;
+					}
+				}
+				if (isDelected)
+					mALServerInfo.remove(mALServerInfo.get(i));
+			}
+			
+			//thêm vào những device mới nếu có
+			for (int i = 0 ; i < mALServerInfoTemp.size() ; i++)
+			{
+				isAdded = true;
+				for (int j = 0 ; j < mALServerInfo.size() ; j++)
+				{
+					// nếu trùng rồi thì ko thêm vào nữa
+					if (mALServerInfoTemp.get(i).getServerIP().equals(mALServerInfo.get(j).getServerIP()))
+					{
+						isAdded = false;
+						break;
+					}
+				}
+				if (isAdded)
+					mALServerInfo.add(mALServerInfoTemp.get(i));
+			}
+		}
+		else if (mALServerInfoTemp.size() == 0)
+			mALServerInfo.clear();
+		
+		
+		mServerInfoAdaper.notifyDataSetChanged();
+		mALServerInfoTemp.clear();
 	}
 }
