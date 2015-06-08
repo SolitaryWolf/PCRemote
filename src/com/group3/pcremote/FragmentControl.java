@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
@@ -19,19 +20,24 @@ import android.widget.TextView;
 
 import com.group3.pcremote.adapter.HistoryAdapter;
 import com.group3.pcremote.adapter.ServerInfoAdapter;
+import com.group3.pcremote.api.ProcessReceiveResponseConnect;
 import com.group3.pcremote.api.ProcessReceiveUDPPacket;
+import com.group3.pcremote.api.ProcessRequestTimeoutConnection;
+import com.group3.pcremote.api.ProcessSendRequestConnect;
 import com.group3.pcremote.api.ProcessSendUDPPacket;
 import com.group3.pcremote.broadcast.WifiReceiver;
 import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.model.ClientInfo;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
 import com.group3.pcremote.projectinterface.ServerInfoInterface;
 import com.group3.pcremote.projectinterface.WifiInfoInterface;
+import com.group3.pcremote.utils.NetworkUtils;
 
 public class FragmentControl extends Fragment implements WifiInfoInterface,
 		ServerInfoInterface {
 
-	// wifi change part
+	// wifi change 
 	private TextView tvNetWorkConnection;
 	private BroadcastReceiver broadcastRecWifiChange = null;
 
@@ -49,9 +55,18 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	// process
 	private ProcessSendUDPPacket processSendUDPPacket = null;
 	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
+	private ProcessSendRequestConnect processSendRequestConnect = null;
+	private ProcessReceiveResponseConnect processReceiveResponseConnect = null;
 
 	// socket
 	private DatagramSocket mDatagramSoc = null;
+	
+	// connection
+	public static boolean mIsConnected = false;
+	private String mConnectedServerIP = "";
+	
+	// progress dialog
+	private ProgressDialog mProgressDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,6 +103,12 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		
+		// progress dialog
+		mProgressDialog = new ProgressDialog(getActivity());
+		mProgressDialog.setTitle("Connecting...");
+		mProgressDialog.setMessage("Please wait");
+		mProgressDialog.setCancelable(true);
 	}
 
 	private void addEventToFormWidget(View rootView) {
@@ -97,7 +118,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-
+						
+						new ProcessRequestTimeoutConnection(mProgressDialog).execute();
+						mConnectedServerIP = mALServerInfo.get(position).getServerIP().trim();
+						sendRequestConnect(mConnectedServerIP);
+						receiveResponseConnect();
 					}
 
 				});
@@ -147,6 +172,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	// =================================================================//
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.group3.pcremote.projectinterface.ServerInfoInterface#onGetServerInfoDone(com.group3.pcremote.model.ServerInfo)
+	 * Mỗi khi nhận đc ServerInfo 
+	 */
 	@Override
 	public void onGetServerInfoDone(ServerInfo serverInfo) {
 		if (mALServerInfoTemp.size() > 0) {
@@ -158,7 +188,8 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		}
 		mALServerInfoTemp.add(serverInfo);
 	}
-
+	
+	//==================broadcast=========================================//
 	/*
 	 * send broadcast đến các máy trong cùng mạng wifi
 	 */
@@ -178,7 +209,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	}
 
 	/*
-	 * nhận data từ servers
+	 * nhận data từ servers khi gửi broadcast
 	 */
 	public void receiveDataFromServer() {
 		processReceiveUDPacket = new ProcessReceiveUDPPacket(
@@ -189,28 +220,58 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		else
 			processReceiveUDPacket.execute();
 	}
-
-	public void refreshAvailableDeviceList() {
-		// reset list available device
-		mALServerInfo.clear();
-		mServerInfoAdaper.notifyDataSetChanged();
-	}
-
-	private void sendRequestConnect() {
+	//====================================================================//
+	
+	//=================connection========================================//
+	/*
+	 * send request connection
+	 */
+	private void sendRequestConnect(String serverIP) {
 		SenderData senderData = new SenderData();
 		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
+		
+		ClientInfo clientInfo = new ClientInfo();
+		clientInfo.setClientIP(NetworkUtils.getIPAddress(true));
+		clientInfo.setClientName(NetworkUtils.getDeviceName());
+	
+		senderData.setData(clientInfo);
 
-		processSendUDPPacket = new ProcessSendUDPPacket(FragmentControl.this,
-				senderData, mDatagramSoc);
+		processSendRequestConnect = new ProcessSendRequestConnect(FragmentControl.this,
+				senderData, mDatagramSoc, serverIP);
 		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên
 		// nếu muốn chạy song song phải dùng AsyncTask.THREAD_POOL_EXECUTOR
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			processSendUDPPacket
+			processSendRequestConnect
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
-			processSendUDPPacket.execute();
+			processSendRequestConnect.execute();
 	}
 	
+	/*
+	 * receive response connection
+	 */
+	private void receiveResponseConnect()
+	{
+		processReceiveResponseConnect = new ProcessReceiveResponseConnect(
+				FragmentControl.this, FragmentControl.this, mDatagramSoc, mConnectedServerIP);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			processReceiveResponseConnect
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			processReceiveResponseConnect.execute();
+	}
+	
+	/*
+	 *  reset list available device
+	 */
+	public void refreshAvailableDeviceList() {
+		
+		mALServerInfo.clear();
+		mServerInfoAdaper.notifyDataSetChanged();
+	}
+	
+	
+	// cập nhật list available device
 	public void updateAvailableDeviceList()
 	{
 		boolean isDelected = true;
@@ -259,5 +320,10 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		
 		mServerInfoAdaper.notifyDataSetChanged();
 		mALServerInfoTemp.clear();
+	}
+	
+	public void dismissProgressBar()
+	{
+		mProgressDialog.dismiss();
 	}
 }

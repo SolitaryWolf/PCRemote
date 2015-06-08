@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -26,6 +27,7 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	// đc tạo gắn với 1 port cho đến lúc close nên nếu tạo instance mới
 	// nhiều lần sẽ bị lỗi Socket EADDRINUSE (Address already in use)
 	private DatagramSocket mDatagramSoc = null;
+	private String mServerIP = "";
 
 	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket) {
@@ -34,14 +36,22 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 		this.mDatagramSoc = mDatagramSocket;
 	}
 
+	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
+			DatagramSocket mDatagramSocket, String mServerIP) {
+		this.mSenderData = mSenderData;
+		this.mContext = mContext;
+		this.mDatagramSoc = mDatagramSocket;
+		this.mServerIP = mServerIP;
+	}
+
 	@Override
 	protected Void doInBackground(Void... params) {
 		if (!isCancelled()) {
 			try {
-				//Log.d("Socket", "ProcessSendUDPPacket is called");			
+				// Log.d("Socket", "ProcessSendUDPPacket is called");
 
 				mDatagramSoc.setBroadcast(true);
-				
+
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream(
 						6400);
 				final ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -50,7 +60,7 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 
 				DatagramPacket packet = new DatagramPacket(data, data.length,
 						getBroadcastAddress(), SocketConstant.PORT);
-				while (!isCancelled()) {					
+				while (!isCancelled()) {
 					mDatagramSoc.send(packet);
 					Thread.sleep(2000);
 					publishProgress();
@@ -60,18 +70,21 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 			} catch (InterruptedException e) {
 				Log.e("Socket", e.getMessage());
 			}
+
 		}
 		return null;
 	}
-	
-	
-	
+
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
-		Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(R.id.content_frame); //lấy fragment hiện tại
-		if (f instanceof FragmentControl) 
-			((FragmentControl) f).updateAvailableDeviceList();
+		if (mSenderData.getCommand().equals(SocketConstant.REQUEST_SERVER_INFO)) {
+			Fragment f = mContext.getActivity().getSupportFragmentManager()
+					.findFragmentById(R.id.content_frame); // lấy fragment hiện
+															// tại
+			if (f instanceof FragmentControl)
+				((FragmentControl) f).updateAvailableDeviceList();
+		}
 	}
 
 	/*

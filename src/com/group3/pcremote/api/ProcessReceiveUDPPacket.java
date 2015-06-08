@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.group3.pcremote.FragmentControl;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
@@ -22,9 +23,10 @@ import com.group3.pcremote.projectinterface.ServerInfoInterface;
 public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 
 	private SenderData mSenderData = null;
-	private Fragment mContext;
+	private Fragment mContext = null;
 	private ServerInfoInterface mServerInfoInterface;
 	private DatagramSocket mDatagramSoc = null;
+	private String mConnectedServerIP = "";
 
 	public ProcessReceiveUDPPacket(Fragment mContext,
 			ServerInfoInterface mServerInfoInterface,
@@ -83,21 +85,4 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, ServerInfo, Void> {
 		if (values[0] != null)
 			mServerInfoInterface.onGetServerInfoDone(values[0]);
 	}
-
-	/*
-	 * method trả về địa chỉ broad cast của mạng wifi đang kết nối
-	 */
-	InetAddress getBroadcastAddress() throws IOException {
-		WifiManager wifi = (WifiManager) mContext.getActivity()
-				.getSystemService(Context.WIFI_SERVICE);
-		DhcpInfo dhcp = wifi.getDhcpInfo();
-		// handle null somehow
-
-		int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-		byte[] quads = new byte[4];
-		for (int k = 0; k < 4; k++)
-			quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
-		return InetAddress.getByAddress(quads);
-	}
-
 }
