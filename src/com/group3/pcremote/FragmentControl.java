@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.group3.pcremote.adapter.HistoryAdapter;
 import com.group3.pcremote.adapter.ServerInfoAdapter;
-import com.group3.pcremote.api.ProcessReceiveResponseConnect;
 import com.group3.pcremote.api.ProcessReceiveUDPPacket;
 import com.group3.pcremote.api.ProcessRequestTimeoutConnection;
 import com.group3.pcremote.api.ProcessSendRequestConnect;
@@ -56,14 +55,13 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ProcessSendUDPPacket processSendUDPPacket = null;
 	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
 	private ProcessSendRequestConnect processSendRequestConnect = null;
-	private ProcessReceiveResponseConnect processReceiveResponseConnect = null;
 
 	// socket
 	private DatagramSocket mDatagramSoc = null;
 	
 	// connection
 	public static boolean mIsConnected = false;
-	private String mConnectedServerIP = "";
+	public static String mConnectedServerIP = "";
 	
 	// progress dialog
 	private ProgressDialog mProgressDialog;
@@ -119,10 +117,10 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						
-						new ProcessRequestTimeoutConnection(mProgressDialog).execute();
+						new ProcessRequestTimeoutConnection(FragmentControl.this, mProgressDialog).execute();
 						mConnectedServerIP = mALServerInfo.get(position).getServerIP().trim();
 						sendRequestConnect(mConnectedServerIP);
-						receiveResponseConnect();
+						//receiveResponseConnect();
 					}
 
 				});
@@ -228,7 +226,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	 */
 	private void sendRequestConnect(String serverIP) {
 		SenderData senderData = new SenderData();
-		senderData.setCommand(SocketConstant.REQUEST_SERVER_INFO);
+		senderData.setCommand(SocketConstant.REQUEST_CONNECT);
 		
 		ClientInfo clientInfo = new ClientInfo();
 		clientInfo.setClientIP(NetworkUtils.getIPAddress(true));
@@ -250,7 +248,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	/*
 	 * receive response connection
 	 */
-	private void receiveResponseConnect()
+/*	private void receiveResponseConnect()
 	{
 		processReceiveResponseConnect = new ProcessReceiveResponseConnect(
 				FragmentControl.this, FragmentControl.this, mDatagramSoc, mConnectedServerIP);
@@ -259,7 +257,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			processReceiveResponseConnect.execute();
-	}
+	}*/
 	
 	/*
 	 *  reset list available device

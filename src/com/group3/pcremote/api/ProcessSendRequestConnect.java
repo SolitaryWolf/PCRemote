@@ -64,10 +64,10 @@ public class ProcessSendRequestConnect extends AsyncTask<Void, Void, Void> {
 		return null;
 	}
 
-	@Override
+	/*@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
 
-	}
+	}*/
 
 }

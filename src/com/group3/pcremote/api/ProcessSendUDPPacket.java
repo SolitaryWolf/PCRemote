@@ -36,14 +36,6 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 		this.mDatagramSoc = mDatagramSocket;
 	}
 
-	public ProcessSendUDPPacket(Fragment mContext, SenderData mSenderData,
-			DatagramSocket mDatagramSocket, String mServerIP) {
-		this.mSenderData = mSenderData;
-		this.mContext = mContext;
-		this.mDatagramSoc = mDatagramSocket;
-		this.mServerIP = mServerIP;
-	}
-
 	@Override
 	protected Void doInBackground(Void... params) {
 		if (!isCancelled()) {

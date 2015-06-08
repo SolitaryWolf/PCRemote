@@ -1,16 +1,19 @@
 package com.group3.pcremote.api;
 
-import com.group3.pcremote.FragmentControl;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.widget.ProgressBar;
+import android.support.v4.app.Fragment;
+import android.widget.Toast;
+
+import com.group3.pcremote.FragmentControl;
 
 public class ProcessRequestTimeoutConnection extends
 		AsyncTask<Void, Void, Void> {
+	private Fragment mContext;
 	private ProgressDialog mProgressDialog;
 
-	public ProcessRequestTimeoutConnection(ProgressDialog mProgressDialog) {
+	public ProcessRequestTimeoutConnection(Fragment mContext, ProgressDialog mProgressDialog) {
+		this.mContext = mContext;
 		this.mProgressDialog = mProgressDialog;
 	}
 
@@ -36,6 +39,7 @@ public class ProcessRequestTimeoutConnection extends
 
 		mProgressDialog.dismiss();
 		FragmentControl.mIsConnected = false;
+		Toast.makeText(mContext.getActivity(), "Time out", Toast.LENGTH_SHORT).show();
 		
 	}
 
