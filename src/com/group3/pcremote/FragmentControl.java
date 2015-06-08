@@ -55,6 +55,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ProcessSendUDPPacket processSendUDPPacket = null;
 	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
 	private ProcessSendRequestConnect processSendRequestConnect = null;
+	private ProcessRequestTimeoutConnection processRequestTimeoutConnection = null;
 
 	// socket
 	private DatagramSocket mDatagramSoc = null;
@@ -62,6 +63,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	// connection
 	public static boolean mIsConnected = false;
 	public static String mConnectedServerIP = "";
+	public static boolean mIsTimeOut = false;
 	
 	// progress dialog
 	private ProgressDialog mProgressDialog;
@@ -117,10 +119,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						
-						new ProcessRequestTimeoutConnection(FragmentControl.this, mProgressDialog).execute();
+						mIsTimeOut = false;
+						processRequestTimeoutConnection = new ProcessRequestTimeoutConnection(FragmentControl.this, mProgressDialog);
+						processRequestTimeoutConnection.execute();
 						mConnectedServerIP = mALServerInfo.get(position).getServerIP().trim();
 						sendRequestConnect(mConnectedServerIP);
-						//receiveResponseConnect();
 					}
 
 				});
@@ -244,20 +247,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		else
 			processSendRequestConnect.execute();
 	}
-	
-	/*
-	 * receive response connection
-	 */
-/*	private void receiveResponseConnect()
-	{
-		processReceiveResponseConnect = new ProcessReceiveResponseConnect(
-				FragmentControl.this, FragmentControl.this, mDatagramSoc, mConnectedServerIP);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			processReceiveResponseConnect
-					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		else
-			processReceiveResponseConnect.execute();
-	}*/
+	//=======================================================================//
 	
 	/*
 	 *  reset list available device
@@ -323,5 +313,11 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	public void dismissProgressBar()
 	{
 		mProgressDialog.dismiss();
+	}
+	
+	public void cancelRequestTimeoutConnection()
+	{
+		if (processRequestTimeoutConnection != null && !processRequestTimeoutConnection.isCancelled())
+		processRequestTimeoutConnection.cancel(true);
 	}
 }

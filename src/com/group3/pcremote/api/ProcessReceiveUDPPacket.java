@@ -73,7 +73,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 					}
 				}
 				else if (mSenderData.getCommand().equals(
-						SocketConstant.CONNECT_ACCEPT)) {
+						SocketConstant.CONNECT_ACCEPT) && !FragmentControl.mIsTimeOut) {
 					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostName()))
 					{
 						FragmentControl.mIsConnected = true;
@@ -82,7 +82,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				}
 				
 				else if (mSenderData.getCommand().equals(
-						SocketConstant.CONNECT_REFUSE)) {
+						SocketConstant.CONNECT_REFUSE) && !FragmentControl.mIsTimeOut) {
 					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostName()))
 					{
 						FragmentControl.mIsConnected = false;
@@ -117,7 +117,10 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 					.findFragmentById(R.id.content_frame); // lấy fragment hiện
 															// tại
 			if (f instanceof FragmentControl)
+			{
 				((FragmentControl) f).dismissProgressBar();
+				((FragmentControl) f).cancelRequestTimeoutConnection();
+			}
 			
 			if (values[0].equals(SocketConstant.CONNECT_ACCEPT))
 				Toast.makeText(mContext.getActivity(), "Connected", Toast.LENGTH_SHORT).show();
