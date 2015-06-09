@@ -20,20 +20,24 @@ import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
+import com.group3.pcremote.projectinterface.ConnectionOKInterface;
 import com.group3.pcremote.projectinterface.ServerInfoInterface;
 
 public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 
 	private SenderData mSenderData = null;
 	private Fragment mContext = null;
-	private ServerInfoInterface mServerInfoInterface;
+	private ServerInfoInterface mServerInfoInterface = null;
+	private ConnectionOKInterface mConnectionOKInterface = null;
 	private DatagramSocket mDatagramSoc = null;
 	
 	public ProcessReceiveUDPPacket(Fragment mContext,
 			ServerInfoInterface mServerInfoInterface,
+			ConnectionOKInterface mConnectionOkInterface,
 			DatagramSocket mDatagramSoc) {
 		this.mContext = mContext;
 		this.mServerInfoInterface = mServerInfoInterface;
+		this.mConnectionOKInterface = mConnectionOkInterface;
 		this.mDatagramSoc = mDatagramSoc;
 	}
 
@@ -66,7 +70,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 					 */
 					if (mSenderData.getData() instanceof ServerInfo) {
 						ServerInfo sInfo = new ServerInfo();
-						sInfo.setServerIP(pk.getAddress().getHostName());
+						sInfo.setServerIP(pk.getAddress().getHostAddress());
 						sInfo.setServerName(((ServerInfo) mSenderData.getData())
 								.getServerName());
 						publishProgress(sInfo);
@@ -123,7 +127,10 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 			}
 			
 			if (values[0].equals(SocketConstant.CONNECT_ACCEPT))
+			{
 				Toast.makeText(mContext.getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+				mConnectionOKInterface.onAcceptConnection();
+			}
 			else if (values[0].equals(SocketConstant.CONNECT_REFUSE))
 				Toast.makeText(mContext.getActivity(), "Can't connect", Toast.LENGTH_SHORT).show();	
 		}

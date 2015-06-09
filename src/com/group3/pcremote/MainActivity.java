@@ -3,9 +3,11 @@ package com.group3.pcremote;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -42,6 +44,8 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ActionBar bar = getActionBar();
+		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#01579b")));
 
 		getFormWidgets();
 		addEventToFormWidgets();
@@ -58,7 +62,8 @@ public class MainActivity extends FragmentActivity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		lvDrawer = (ListView) findViewById(R.id.left_drawer);
 		//set background color for navigation drawer
-		lvDrawer.setBackgroundColor(Color.GRAY);
+		int mainColor = Color.parseColor("#01579b");
+		lvDrawer.setBackgroundColor(mainColor);
 
 		/*
 		 * mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,

@@ -2,14 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/MainColor" >
 
     <TextView
         android:id="@+id/tvNetworkConnection"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/White" />
 
-    <View
+    <!-- <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="0dp"
@@ -17,7 +20,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="0dp"
         android:background="#DADADC" >
-    </View>
+    </View> -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,10 +32,11 @@
             android:id="@+id/tvAvailableDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FF888888"
+            android:background="@color/AliceBlue"
             android:text="Available Devices"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" >
+            android:textColor="@color/MainColor"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 
         <ListView
@@ -52,10 +56,11 @@
             android:id="@+id/tvHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FF888888"
+            android:background="@color/AliceBlue"
             android:text="History"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" >
+            android:textColor="@color/MainColor"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
 
         <ListView

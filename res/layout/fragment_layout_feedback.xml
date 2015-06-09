@@ -2,21 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/MainColor" >
 
-    <TextView
-        android:id="@+id/tvNetworkConnection"
+    <EditText 
+        android:id="@+id/txtFeedbackContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="start"   
+        android:textColorHint="@color/White"   
+        android:textColor="@color/White"
+        android:hint="Type your feedback here..." />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="0dp"
-        android:background="#DADADC" >
-    </View>
+    <Button 
+        android:id="@+id/btnSendFeedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/White"
+        android:text="Send"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
