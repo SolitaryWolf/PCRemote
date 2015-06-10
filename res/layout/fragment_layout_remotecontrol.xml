@@ -4,19 +4,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tvNetworkConnection"
+    <EditText
+        android:id="@+id/txtKeyPress"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/White" />
 
-    <View
+    <!-- <RelativeLayout
+        android:id="@+id/relativeLayoutPanel"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="0dp"
-        android:background="#DADADC" >
-    </View>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/MainColor" >
+
+        <LinearLayout
+            android:id="@+id/linearLayoutTouchpad"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutMouseButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnLeftMouse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/White" />
+
+            <Button
+                android:id="@+id/btnMiddleMouse"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/White" />
+
+            <Button
+                android:id="@+id/btnRightMouse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/White" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnShowVirtualKeyboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" /> -->
 
 </LinearLayout>

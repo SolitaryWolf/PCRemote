@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ProcessRequestTimeoutConnection processRequestTimeoutConnection = null;
 
 	// socket
-	private static DatagramSocket mDatagramSoc = null;
+	public static DatagramSocket mDatagramSoc = null;
 
 	// connection
 	public static boolean mIsConnected = false;
@@ -270,7 +271,14 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	@Override
 	public void onAcceptConnection() {
 		cancelSendBroadcast();
+		
+		Fragment fragment = new FragmentRemoteControl();
 
+		FragmentManager fragManager = getActivity().getSupportFragmentManager();
+		FragmentTransaction fragTransaction = fragManager.beginTransaction();
+		// để khi ấn back quay về cửa sổ trước đó
+		fragTransaction.addToBackStack(null); 
+		fragTransaction.replace(R.id.content_frame, fragment).commit();
 	}
 
 	/*

@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/White"
         android:text="Send"
+        android:background="@color/MainColor"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
