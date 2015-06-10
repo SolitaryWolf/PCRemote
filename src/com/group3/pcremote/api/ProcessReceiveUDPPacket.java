@@ -30,7 +30,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 	private ServerInfoInterface mServerInfoInterface = null;
 	private ConnectionOKInterface mConnectionOKInterface = null;
 	private DatagramSocket mDatagramSoc = null;
-	
+
 	public ProcessReceiveUDPPacket(Fragment mContext,
 			ServerInfoInterface mServerInfoInterface,
 			ConnectionOKInterface mConnectionOkInterface,
@@ -45,11 +45,13 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 	protected Void doInBackground(Void... params) {
 		try {
 			while (!isCancelled()) {
+				if (mDatagramSoc == null)
+					return null;
 				byte[] buffer = new byte[6400];
 				DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 				ByteArrayInputStream baos = null;
 				ObjectInputStream ois = null;
-				
+
 				mDatagramSoc.receive(pk);
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
@@ -75,20 +77,21 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 								.getServerName());
 						publishProgress(sInfo);
 					}
-				}
-				else if (mSenderData.getCommand().equals(
-						SocketConstant.CONNECT_ACCEPT) && !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostName()))
-					{
+				} else if (mSenderData.getCommand().equals(
+						SocketConstant.CONNECT_ACCEPT)
+						&& !FragmentControl.mIsTimeOut) {
+					if (FragmentControl.mConnectedServerIP.equals(pk
+							.getAddress().getHostName())) {
 						FragmentControl.mIsConnected = true;
 						publishProgress(SocketConstant.CONNECT_ACCEPT);
 					}
 				}
-				
+
 				else if (mSenderData.getCommand().equals(
-						SocketConstant.CONNECT_REFUSE) && !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostName()))
-					{
+						SocketConstant.CONNECT_REFUSE)
+						&& !FragmentControl.mIsTimeOut) {
+					if (FragmentControl.mConnectedServerIP.equals(pk
+							.getAddress().getHostName())) {
 						FragmentControl.mIsConnected = false;
 						publishProgress(SocketConstant.CONNECT_REFUSE);
 					}
@@ -105,34 +108,31 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 
 	@Override
 	protected void onProgressUpdate(Object... values) {
-		
-		
+
 		String command = mSenderData.getCommand();
-		if (command.equals(SocketConstant.RESPONSE_SERVER_INFO))
-		{
+		if (command.equals(SocketConstant.RESPONSE_SERVER_INFO)) {
 			Log.d("Socket", "Update UI is called");
 			if (values[0] != null && values[0] instanceof ServerInfo)
-				mServerInfoInterface.onGetServerInfoDone((ServerInfo)values[0]);
-		}
-		else if (command.equals(SocketConstant.CONNECT_ACCEPT) || command.equals(SocketConstant.CONNECT_REFUSE))
-		{
+				mServerInfoInterface
+						.onGetServerInfoDone((ServerInfo) values[0]);
+		} else if (command.equals(SocketConstant.CONNECT_ACCEPT)
+				|| command.equals(SocketConstant.CONNECT_REFUSE)) {
 			Log.d("Socket", "Receive connection signal");
 			Fragment f = mContext.getActivity().getSupportFragmentManager()
 					.findFragmentById(R.id.content_frame); // lấy fragment hiện
 															// tại
-			if (f instanceof FragmentControl)
-			{
+			if (f instanceof FragmentControl) {
 				((FragmentControl) f).dismissProgressBar();
 				((FragmentControl) f).cancelRequestTimeoutConnection();
 			}
-			
-			if (values[0].equals(SocketConstant.CONNECT_ACCEPT))
-			{
-				Toast.makeText(mContext.getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+
+			if (values[0].equals(SocketConstant.CONNECT_ACCEPT)) {
+				Toast.makeText(mContext.getActivity(), "Connected",
+						Toast.LENGTH_SHORT).show();
 				mConnectionOKInterface.onAcceptConnection();
-			}
-			else if (values[0].equals(SocketConstant.CONNECT_REFUSE))
-				Toast.makeText(mContext.getActivity(), "Can't connect", Toast.LENGTH_SHORT).show();	
+			} else if (values[0].equals(SocketConstant.CONNECT_REFUSE))
+				Toast.makeText(mContext.getActivity(), "Can't connect",
+						Toast.LENGTH_SHORT).show();
 		}
 	}
 }

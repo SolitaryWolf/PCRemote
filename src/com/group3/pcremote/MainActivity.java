@@ -146,8 +146,8 @@ public class MainActivity extends FragmentActivity {
 
 		FragmentManager fragManager = getSupportFragmentManager();
 		FragmentTransaction fragTransaction = fragManager.beginTransaction();
-		fragTransaction.addToBackStack(null); // để khi ấn back quay về cửa sổ
-												// trước đó
+		// để khi ấn back quay về cửa sổ trước đó
+		//fragTransaction.addToBackStack(null); 
 		fragTransaction.replace(R.id.content_frame, fragment).commit();
 
 		lvDrawer.setItemChecked(possition, true);
@@ -247,4 +247,5 @@ public class MainActivity extends FragmentActivity {
 		}
 		return false;
 	}
+	
 }

@@ -40,6 +40,8 @@ public class ProcessSendUDPPacket extends AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(Void... params) {
 		if (!isCancelled()) {
 			try {
+				if (mDatagramSoc == null)
+					return null;
 				// Log.d("Socket", "ProcessSendUDPPacket is called");
 
 				mDatagramSoc.setBroadcast(true);

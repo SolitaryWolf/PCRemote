@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +60,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	private ProcessRequestTimeoutConnection processRequestTimeoutConnection = null;
 
 	// socket
-	private DatagramSocket mDatagramSoc = null;
+	private static DatagramSocket mDatagramSoc = null;
 
 	// connection
 	public static boolean mIsConnected = false;
@@ -77,11 +78,6 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 		getFormWidgets(rootView);
 		addEventToFormWidget(rootView);
-
-		
-
-		// new UDPClient(FragmentControl.this, "Get PC info").execute();
-		// new ConnectedPCsInfo().execute();
 
 		return rootView;
 	}
@@ -292,13 +288,12 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 				&& !processRequestTimeoutConnection.isCancelled())
 			processRequestTimeoutConnection.cancel(true);
 	}
-	
+
 	/*
 	 * interrupt thread send broadcast
 	 */
 	public void cancelSendBroadcast() {
-		if (processSendUDPPacket != null
-				&& !processSendUDPPacket.isCancelled())
+		if (processSendUDPPacket != null && !processSendUDPPacket.isCancelled())
 			processSendUDPPacket.cancel(true);
 	}
 
@@ -346,7 +341,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mServerInfoAdaper.notifyDataSetChanged();
 		mALServerInfoTemp.clear();
 	}
-	
+
 	/*
 	 * interrupt receive data from server
 	 */
@@ -355,7 +350,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 				&& !processReceiveUDPacket.isCancelled())
 			processReceiveUDPacket.cancel(true);
 	}
-	
+
 	/*
 	 * interrupt send request connection
 	 */
@@ -368,21 +363,34 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	@Override
 	public void onPause() {
 		super.onPause();
-		
-		cancelSendBroadcast();
-		cancelReceiveDataFromServer();
+
 		cancelRequestTimeoutConnection();
 		cancelSendRequestConnect();
-		
-		
+		cancelSendBroadcast();
+		cancelReceiveDataFromServer();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
 		receiveBroadcastWifiChange();
 	}
-	
-	
 
+	@Override
+	public void onDestroyView() {
+		// hủy đăng ký
+		if (broadcastRecWifiChange != null)
+			getActivity().unregisterReceiver(broadcastRecWifiChange);
+		
+		Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
+				R.id.content_frame);
+		FragmentTransaction fragTransaction = getActivity()
+				.getSupportFragmentManager().beginTransaction();
+		fragTransaction.remove(fragment);
+		fragTransaction.commit();
+		
+		super.onDestroyView();
+	}
+	
 }
