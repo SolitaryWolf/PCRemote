@@ -45,18 +45,18 @@ public class FragmentRemoteControl extends Fragment {
 	}
 
 	private void getFormWidgets(View rootView) {
-		/*btnLeftMouse = (Button) rootView.findViewById(R.id.btnLeftMouse);
+		btnLeftMouse = (Button) rootView.findViewById(R.id.btnLeftMouse);
 		btnRightMouse = (Button) rootView.findViewById(R.id.btnRightMouse);
 		btnMiddleMouse = (Button) rootView.findViewById(R.id.btnMiddleMouse);
 		btnShowVirtualKeyboard = (Button) rootView
-				.findViewById(R.id.btnShowVirtualKeyboard);*/
+				.findViewById(R.id.btnShowVirtualKeyboard);
 
 		txtKeyPress = (EditText) rootView.findViewById(R.id.txtKeyPress);
 	}
 
 	private void addEventToFormWidget(View rootView) {
 
-		/*btnLeftMouse.setOnClickListener(new View.OnClickListener() {
+		btnLeftMouse.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -129,33 +129,17 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				openKeyBoard();
+				txtKeyPress.requestFocus();
 
 			}
-		});*/
+		});
 
 		TextWatcher inputTextWatcher = new TextWatcher() {
 			public void afterTextChanged(Editable s) {
-			}
-
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				Log.d("Keyboard", s.charAt(count - 1) + " character to send");
-				;
-			}
-		};
-		txtKeyPress.addTextChangedListener(inputTextWatcher);
-
-		txtKeyPress.setOnKeyListener(new View.OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				command = KeyboardConstant.KEYBOARD_COMMAND;
 				KeyboardCommand keyboardCommand = new KeyboardCommand();
-				keyboardCommand.setKeyboardCode(keyCode);
+				keyboardCommand.setKeyboardCode(charToKeycode(s.charAt(s
+						.length() - 1)));
 				keyboardCommand.setPress(KeyboardConstant.PRESS);
 
 				SenderData senderData = new SenderData();
@@ -168,10 +152,31 @@ public class FragmentRemoteControl extends Fragment {
 						FragmentControl.mConnectedServerIP);
 				mProcessSendControlCommand.execute();
 
-				Log.d("Keyboard", keyCode + " character(code) to send");
-				return false;
+				Log.d("Keyboard", s.charAt(s.length() - 1)
+						+ " character to send");
 			}
-		});
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+
+			}
+		};
+		txtKeyPress.addTextChangedListener(inputTextWatcher);
+
+		/*
+		 * txtKeyPress.setOnKeyListener(new View.OnKeyListener() {
+		 * 
+		 * @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
+		 * 
+		 * 
+		 * Log.d("Keyboard", keyCode + " character(code) to send"); return
+		 * false; } });
+		 */
 	}
 
 	// For open keyboard
@@ -186,6 +191,53 @@ public class FragmentRemoteControl extends Fragment {
 		InputMethodManager imm = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+	}
+
+	public int charToKeycode(char c) {
+		int keyCode = -1;
+		switch (c) {
+		/** Key code constant: '0' key. */
+		case '0':
+			keyCode = 7;
+			break;
+		/** Key code constant: '1' key. */
+		case '1':
+			keyCode = 8;
+			break;
+		/** Key code constant: '2' key. */
+		case '2':
+			keyCode = 9;
+			break;
+		/** Key code constant: '3' key. */
+		case '3':
+			keyCode = 10;
+			break;
+		/** Key code constant: '4' key. */
+		case '4':
+			keyCode = 11;
+			break;
+		/** Key code constant: '5' key. */
+		case '5':
+			keyCode = 12;
+			break;
+		/** Key code constant: '6' key. */
+		case '6':
+			keyCode = 13;
+			break;
+		/** Key code constant: '7' key. */
+		case '7':
+			keyCode = 14;
+			break;
+		/** Key code constant: '8' key. */
+		case '8':
+			keyCode = 15;
+			break;
+		/** Key code constant: '9' key. */
+		case '9':
+			keyCode = 16;
+			break;
+		}
+		return keyCode;
 	}
 
 }

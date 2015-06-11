@@ -4,59 +4,52 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/txtKeyPress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/White" />
-
-    <!-- <RelativeLayout
-        android:id="@+id/relativeLayoutPanel"
+    <RelativeLayout
+        android:id="@+id/linearLayoutTouchpad"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/MainColor" >
 
-        <LinearLayout
-            android:id="@+id/linearLayoutTouchpad"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayoutMouseButton"
+        <EditText
+            android:id="@+id/txtKeyPress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/btnLeftMouse"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/White" />
-
-            <Button
-                android:id="@+id/btnMiddleMouse"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/White" />
-
-            <Button
-                android:id="@+id/btnRightMouse"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/White" />
-        </LinearLayout>
+            android:inputType="text"
+            android:text="dsfadsfasdfsd"
+            android:textColor="@color/White" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutMouseButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnLeftMouse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/White" />
+
+        <Button
+            android:id="@+id/btnMiddleMouse"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/White" />
+
+        <Button
+            android:id="@+id/btnRightMouse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/White" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnShowVirtualKeyboard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" /> -->
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

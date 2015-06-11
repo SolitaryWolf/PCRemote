@@ -179,8 +179,12 @@ public final class R {
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f0a0006;
-        public static final int action_refresh=0x7f0a0012;
+        public static final int action_refresh=0x7f0a0018;
+        public static final int btnLeftMouse=0x7f0a0014;
+        public static final int btnMiddleMouse=0x7f0a0015;
+        public static final int btnRightMouse=0x7f0a0016;
         public static final int btnSendFeedback=0x7f0a0010;
+        public static final int btnShowVirtualKeyboard=0x7f0a0017;
         public static final int content_frame=0x7f0a0001;
         public static final int drawer_icon=0x7f0a0004;
         public static final int drawer_itemName=0x7f0a0005;
@@ -188,6 +192,8 @@ public final class R {
         public static final int itemLayout=0x7f0a0003;
         public static final int left_drawer=0x7f0a0002;
         public static final int linearLayout=0x7f0a0007;
+        public static final int linearLayoutMouseButton=0x7f0a0013;
+        public static final int linearLayoutTouchpad=0x7f0a0011;
         public static final int lvAvailableDevice=0x7f0a000c;
         public static final int lvHistory=0x7f0a000e;
         public static final int tvAvailableDevice=0x7f0a000b;
@@ -196,7 +202,7 @@ public final class R {
         public static final int tvServerIP=0x7f0a0009;
         public static final int tvServerName=0x7f0a0008;
         public static final int txtFeedbackContent=0x7f0a000f;
-        public static final int txtKeyPress=0x7f0a0011;
+        public static final int txtKeyPress=0x7f0a0012;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
