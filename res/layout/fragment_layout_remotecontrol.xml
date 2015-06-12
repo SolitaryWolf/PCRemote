@@ -5,26 +5,31 @@
     android:orientation="vertical" >
 
     <RelativeLayout
-        android:id="@+id/linearLayoutTouchpad"
+        android:id="@+id/relativeLayoutTouchpad"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/MainColor" >
 
-        <EditText
+<!-- android:inputType="textNoSuggestions" is used because "This happens because in cases where the user types a space, 
+certain devices will capitalize the previous word (if it is the first word and inputType="name"). 
+Therefore, afterTextChanged gets called twice. Once for the space, and once for the capitalization" -->
+
+        <com.group3.pcremote.model.KeyboardEditText
             android:id="@+id/txtKeyPress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text="dsfadsfasdfsd"
-            android:textColor="@color/White" />
+            android:inputType="textNoSuggestions"
+            android:textColor="@color/White"
+            android:textCursorDrawable="@null" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/linearLayoutMouseButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="@color/MainColor" >
 
         <Button
             android:id="@+id/btnLeftMouse"
@@ -47,9 +52,36 @@
             android:textColor="@color/White" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnShowVirtualKeyboard"
+    <LinearLayout
+        android:id="@+id/linearLayoutBottomMenu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/MainColor"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnShowVirtualKeyboard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Virtual Keyboard"
+            android:textColor="@color/White" />
+
+        <Button
+            android:id="@+id/btnShowSpecialKeyboard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Special keyboard"
+            android:textColor="@color/White" />
+
+        <Button
+            android:id="@+id/btnShowSystemControl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="System"
+            android:textColor="@color/White" />
+    </LinearLayout>
 
 </LinearLayout>

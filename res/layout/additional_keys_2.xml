@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/MainColor"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_weight="0.66"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/btnEsc"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Esc" />
+
+            <Button
+                android:id="@+id/btnHome"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Home" />
+
+            <Button
+                android:id="@+id/btnEnd"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="End" />
+
+            <Button
+                android:id="@+id/btnIns"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Ins" />
+
+            <Button
+                android:id="@+id/btnDel"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Del" />
+
+            <Button
+                android:id="@+id/btnPgUp"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Pg Up" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/btnEnter"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Enter" />
+
+            <Button
+                android:id="@+id/btnNumLock"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="NumLock" />
+
+            <Button
+                android:id="@+id/btnCaps"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Caps" />
+
+            <Button
+                android:id="@+id/btnF10"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="F10" />
+
+            <Button
+                android:id="@+id/btnUp"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Up" />
+
+            <Button
+                android:id="@+id/btnPgDown"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Pg Down" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/btnMore2"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="More"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnCtrl2"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Ctrl" />
+
+            <Button
+                android:id="@+id/btnAlt2"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Alt" />
+
+            <Button
+                android:id="@+id/btnLeft"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Left" />
+
+            <Button
+                android:id="@+id/btnDown"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Down" />
+
+            <Button
+                android:id="@+id/btnRight"
+                style="@style/button_virtual"
+                android:layout_weight="1"
+                android:text="Right" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

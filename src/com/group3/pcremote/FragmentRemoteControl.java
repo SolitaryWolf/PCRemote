@@ -1,6 +1,7 @@
 package com.group3.pcremote;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -8,30 +9,38 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.constant.KeyboardConstant;
 import com.group3.pcremote.constant.MouseConstant;
+import com.group3.pcremote.model.Coordinates;
 import com.group3.pcremote.model.KeyboardCommand;
+import com.group3.pcremote.model.KeyboardEditText;
 import com.group3.pcremote.model.MouseClick;
 import com.group3.pcremote.model.SenderData;
+import com.group3.pcremote.utils.KeyboardUtils;
 
 public class FragmentRemoteControl extends Fragment {
 	private Button btnLeftMouse;
 	private Button btnRightMouse;
 	private Button btnMiddleMouse;
 	private Button btnShowVirtualKeyboard;
-	private EditText txtKeyPress;
+	private KeyboardEditText txtKeyPress;
+	private RelativeLayout relativeLayoutTouchpad;
 
 	private ProcessSendControlCommand mProcessSendControlCommand = null;
 
 	private String command = "";
-
+	
+	private static float x = 0, y = 0;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -51,7 +60,11 @@ public class FragmentRemoteControl extends Fragment {
 		btnShowVirtualKeyboard = (Button) rootView
 				.findViewById(R.id.btnShowVirtualKeyboard);
 
-		txtKeyPress = (EditText) rootView.findViewById(R.id.txtKeyPress);
+		txtKeyPress = (KeyboardEditText) rootView
+				.findViewById(R.id.txtKeyPress);
+		txtKeyPress.setBackgroundColor(Color.TRANSPARENT);
+		relativeLayoutTouchpad = (RelativeLayout) rootView
+				.findViewById(R.id.relativeLayoutTouchpad);
 	}
 
 	private void addEventToFormWidget(View rootView) {
@@ -60,7 +73,7 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				command = MouseConstant.MOUSE_COMMAND;
+				command = MouseConstant.MOUSE_CLICK_COMMAND;
 
 				MouseClick mouseClick = new MouseClick();
 				mouseClick.setButtonIndex(MouseConstant.LEFT_MOUSE);
@@ -83,7 +96,7 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				command = MouseConstant.MOUSE_COMMAND;
+				command = MouseConstant.MOUSE_CLICK_COMMAND;
 
 				MouseClick mouseClick = new MouseClick();
 				mouseClick.setButtonIndex(MouseConstant.RIGHT_MOUSE);
@@ -106,7 +119,7 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				command = MouseConstant.MOUSE_COMMAND;
+				command = MouseConstant.MOUSE_CLICK_COMMAND;
 
 				MouseClick mouseClick = new MouseClick();
 				mouseClick.setButtonIndex(MouseConstant.MIDDLE_MOUSE);
@@ -130,16 +143,19 @@ public class FragmentRemoteControl extends Fragment {
 			@Override
 			public void onClick(View v) {
 				txtKeyPress.requestFocus();
-
+				openVirtualKeyboard();
 			}
 		});
 
 		TextWatcher inputTextWatcher = new TextWatcher() {
+			@Override
 			public void afterTextChanged(Editable s) {
+				if (s.length() < 1)
+					return;
 				command = KeyboardConstant.KEYBOARD_COMMAND;
 				KeyboardCommand keyboardCommand = new KeyboardCommand();
-				keyboardCommand.setKeyboardCode(charToKeycode(s.charAt(s
-						.length() - 1)));
+				keyboardCommand.setKeyboardCode(KeyboardUtils.toKeycode(s
+						.charAt(s.length() - 1)));
 				keyboardCommand.setPress(KeyboardConstant.PRESS);
 
 				SenderData senderData = new SenderData();
@@ -156,88 +172,108 @@ public class FragmentRemoteControl extends Fragment {
 						+ " character to send");
 			}
 
+			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 
 			}
 
+			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
 
 			}
 		};
 		txtKeyPress.addTextChangedListener(inputTextWatcher);
+		txtKeyPress.setOnKeyListener(new OnKeyListener() {
 
-		/*
-		 * txtKeyPress.setOnKeyListener(new View.OnKeyListener() {
-		 * 
-		 * @Override public boolean onKey(View v, int keyCode, KeyEvent event) {
-		 * 
-		 * 
-		 * Log.d("Keyboard", keyCode + " character(code) to send"); return
-		 * false; } });
-		 */
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (event.getAction() == KeyEvent.ACTION_DOWN) {
+					if (keyCode == KeyEvent.KEYCODE_DEL) {
+						if (keyCode == KeyEvent.KEYCODE_DEL)
+							keyCode = KeyboardConstant.VK_BACK_SPACE;
+						/*
+						 * if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT) keyCode =
+						 * KeyboardConstant.VK_SHIFT;
+						 */
+
+						command = KeyboardConstant.KEYBOARD_COMMAND;
+						KeyboardCommand keyboardCommand = new KeyboardCommand();
+						keyboardCommand.setKeyboardCode(keyCode);
+						keyboardCommand.setPress(KeyboardConstant.PRESS);
+
+						SenderData senderData = new SenderData();
+						senderData.setCommand(command);
+						senderData.setData(keyboardCommand);
+
+						mProcessSendControlCommand = new ProcessSendControlCommand(
+								FragmentRemoteControl.this, senderData,
+								FragmentControl.mDatagramSoc,
+								FragmentControl.mConnectedServerIP);
+						mProcessSendControlCommand.execute();
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+
+		relativeLayoutTouchpad.setOnTouchListener(new View.OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					x = event.getX();
+					y = event.getY();
+				}
+				
+				/*if (event.getAction() == MotionEvent.ACTION_UP)
+				{
+					x = event.getX();
+					y = event.getY();
+				}*/
+
+				if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					command = MouseConstant.MOUSE_MOVE_COMMAND;
+					Coordinates coo = new Coordinates();
+					coo.setX((int)(event.getX() - x));
+					coo.setY((int)(event.getY() - y));
+					
+
+					SenderData senderData = new SenderData();
+					senderData.setCommand(command);
+					senderData.setData(coo);
+
+					mProcessSendControlCommand = new ProcessSendControlCommand(
+							FragmentRemoteControl.this, senderData,
+							FragmentControl.mDatagramSoc,
+							FragmentControl.mConnectedServerIP);
+					mProcessSendControlCommand.execute();
+
+					x = event.getX();
+					y = event.getY();
+				}
+
+				return true;
+
+			}
+		});
 	}
 
 	// For open keyboard
-	public void openKeyBoard() {
+	public void openVirtualKeyboard() {
 		InputMethodManager imm = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 	}
 
 	// For close keyboard
-	public void closeKeyBoard(Context mContext) {
+	public void closeVirtualKeyboard(Context mContext) {
 		InputMethodManager imm = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-	}
-
-	public int charToKeycode(char c) {
-		int keyCode = -1;
-		switch (c) {
-		/** Key code constant: '0' key. */
-		case '0':
-			keyCode = 7;
-			break;
-		/** Key code constant: '1' key. */
-		case '1':
-			keyCode = 8;
-			break;
-		/** Key code constant: '2' key. */
-		case '2':
-			keyCode = 9;
-			break;
-		/** Key code constant: '3' key. */
-		case '3':
-			keyCode = 10;
-			break;
-		/** Key code constant: '4' key. */
-		case '4':
-			keyCode = 11;
-			break;
-		/** Key code constant: '5' key. */
-		case '5':
-			keyCode = 12;
-			break;
-		/** Key code constant: '6' key. */
-		case '6':
-			keyCode = 13;
-			break;
-		/** Key code constant: '7' key. */
-		case '7':
-			keyCode = 14;
-			break;
-		/** Key code constant: '8' key. */
-		case '8':
-			keyCode = 15;
-			break;
-		/** Key code constant: '9' key. */
-		case '9':
-			keyCode = 16;
-			break;
-		}
-		return keyCode;
 	}
 
 }
