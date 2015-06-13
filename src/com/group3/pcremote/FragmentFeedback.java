@@ -1,6 +1,7 @@
 package com.group3.pcremote;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ public class FragmentFeedback extends Fragment {
 		btnSendFeedback = (Button) rootView.findViewById(R.id.btnSendFeedback);
 		txtFeedbackContent = (EditText) rootView
 				.findViewById(R.id.txtFeedbackContent);
+		txtFeedbackContent.setBackgroundColor(Color.TRANSPARENT);
 	}
 
 	private void addEventToFormWidget(View rootView) {

@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,11 +21,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.group3.pcremote.adapter.CustomDrawerAdapter;
+import com.group3.pcremote.api.ProcessSendControlCommand;
+import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.DrawerItem;
+import com.group3.pcremote.model.SenderData;
+
 public class MainActivity extends FragmentActivity {
 	// navigation drawer
 	private DrawerLayout mDrawerLayout;
@@ -37,19 +44,24 @@ public class MainActivity extends FragmentActivity {
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 
-	//điều khiển menu trên action bar
-    public static boolean mIsHiddenMenu = false; // mới vô hiện option menu
+	// điều khiển menu trên action bar
+	public static boolean mIsHiddenMenu = false; // mới vô hiện option menu
+
+	private boolean isPressBackDoubleToDisconnect = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		// prevent screen to dim
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		ActionBar bar = getActionBar();
 		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#01579b")));
 
 		getFormWidgets();
 		addEventToFormWidgets();
-		
 
 		if (savedInstanceState == null) {
 
@@ -61,7 +73,7 @@ public class MainActivity extends FragmentActivity {
 	private void getFormWidgets() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		lvDrawer = (ListView) findViewById(R.id.left_drawer);
-		//set background color for navigation drawer
+		// set background color for navigation drawer
 		int mainColor = Color.parseColor("#01579b");
 		lvDrawer.setBackgroundColor(mainColor);
 
@@ -147,7 +159,7 @@ public class MainActivity extends FragmentActivity {
 		FragmentManager fragManager = getSupportFragmentManager();
 		FragmentTransaction fragTransaction = fragManager.beginTransaction();
 		// để khi ấn back quay về cửa sổ trước đó
-		//fragTransaction.addToBackStack(null); 
+		// fragTransaction.addToBackStack(null);
 		fragTransaction.replace(R.id.content_frame, fragment).commit();
 
 		lvDrawer.setItemChecked(possition, true);
@@ -195,18 +207,15 @@ public class MainActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		
-		if (mIsHiddenMenu == true)
-	    {
-	        for (int i = 0; i < menu.size(); i++)
-	            menu.getItem(i).setVisible(false);
-	    }
-	    else
-	    {
-	        for (int i = 0; i < menu.size(); i++)
-	            menu.getItem(i).setVisible(true);
-	    }
-	    
+
+		if (mIsHiddenMenu == true) {
+			for (int i = 0; i < menu.size(); i++)
+				menu.getItem(i).setVisible(false);
+		} else {
+			for (int i = 0; i < menu.size(); i++)
+				menu.getItem(i).setVisible(true);
+		}
+
 		return true;
 	}
 
@@ -217,11 +226,11 @@ public class MainActivity extends FragmentActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_refresh) {
-			Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_frame); //lấy fragment hiện tại
-			if (f instanceof FragmentControl) 
-			{
+			Fragment f = getSupportFragmentManager().findFragmentById(
+					R.id.content_frame); // lấy fragment hiện tại
+			if (f instanceof FragmentControl) {
 				((FragmentControl) f).sendBroadcast();
-		        
+
 			}
 			return true;
 		}
@@ -247,5 +256,49 @@ public class MainActivity extends FragmentActivity {
 		}
 		return false;
 	}
-	
+
+	// xử lý khi press back
+	@Override
+	public void onBackPressed() {
+
+		int count = getSupportFragmentManager().getBackStackEntryCount();
+
+		if (count == 0)
+			super.onBackPressed();
+
+		else { // đang có hơn 1 fragment trong stack
+
+			// lấy fragment hiện tại
+			Fragment f = getSupportFragmentManager().findFragmentById(
+					R.id.content_frame);
+
+			if (f instanceof FragmentRemoteControl) {
+
+				if (isPressBackDoubleToDisconnect) {
+					SenderData senderData = new SenderData();
+					senderData
+							.setCommand(SocketConstant.NOTIFY_DISCONNECT_FROM_CLIENT);
+					senderData.setData(null);
+					new ProcessSendControlCommand(f, senderData,
+							FragmentControl.mDatagramSoc,
+							FragmentControl.mConnectedServerIP).execute();
+					super.onBackPressed();
+					return;
+				}
+
+				isPressBackDoubleToDisconnect = true;
+				Toast.makeText(this, "Press back again to disconnect",
+						Toast.LENGTH_SHORT).show();
+
+				new Handler().postDelayed(new Runnable() {
+					// 2s ko press back again
+					@Override
+					public void run() {
+						isPressBackDoubleToDisconnect = false;
+					}
+				}, 2000);
+				getFragmentManager().popBackStack();
+			}
+		}
+	}
 }

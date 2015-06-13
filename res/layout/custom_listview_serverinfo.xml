@@ -13,7 +13,7 @@
         <TextView
             android:id="@+id/tvServerName"
             style="@android:style/TextAppearance.DeviceDefault.Large"
-            android:textColor="@color/White"
+            android:textColor="@color/MainColor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -23,7 +23,7 @@
             android:id="@+id/tvServerIP"
             style="@android:style/TextAppearance.DeviceDefault.Large"
             android:layout_width="0dp"
-            android:textColor="@color/White"
+            android:textColor="@color/MainColor"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end" />

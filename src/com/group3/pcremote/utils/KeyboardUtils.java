@@ -7,43 +7,33 @@ public class KeyboardUtils {
 	public static int toKeycode(char character) {
 		int keycode = -1;
 		switch (character) {
-		/** Key code constant: '0' key. */
 		case '0':
 			keycode = KeyboardConstant.VK_0;
 			break;
-		/** Key code constant: '1' key. */
 		case '1':
 			keycode = KeyboardConstant.VK_1;
 			break;
-		/** Key code constant: '2' key. */
 		case '2':
 			keycode = KeyboardConstant.VK_2;
 			break;
-		/** Key code constant: '3' key. */
 		case '3':
 			keycode = KeyboardConstant.VK_3;
 			break;
-		/** Key code constant: '4' key. */
 		case '4':
 			keycode = KeyboardConstant.VK_4;
 			break;
-		/** Key code constant: '5' key. */
 		case '5':
 			keycode = KeyboardConstant.VK_5;
 			break;
-		/** Key code constant: '6' key. */
 		case '6':
 			keycode = KeyboardConstant.VK_6;
 			break;
-		/** Key code constant: '7' key. */
 		case '7':
 			keycode = KeyboardConstant.VK_7;
 			break;
-		/** Key code constant: '8' key. */
 		case '8':
 			keycode = KeyboardConstant.VK_8;
 			break;
-		/** Key code constant: '9' key. */
 		case '9':
 			keycode = KeyboardConstant.VK_9;
 			break;

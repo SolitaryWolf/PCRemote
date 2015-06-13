@@ -1,9 +1,11 @@
 package com.group3.pcremote;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,7 +17,6 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessSendControlCommand;
@@ -29,6 +30,8 @@ import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.utils.KeyboardUtils;
 
 public class FragmentRemoteControl extends Fragment {
+	MainActivity mainActivity;
+
 	private Button btnLeftMouse;
 	private Button btnRightMouse;
 	private Button btnMiddleMouse;
@@ -39,8 +42,9 @@ public class FragmentRemoteControl extends Fragment {
 	private ProcessSendControlCommand mProcessSendControlCommand = null;
 
 	private String command = "";
-	
+
 	private static float x = 0, y = 0;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -223,24 +227,22 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
+
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					x = event.getX();
 					y = event.getY();
 				}
-				
-				/*if (event.getAction() == MotionEvent.ACTION_UP)
-				{
-					x = event.getX();
-					y = event.getY();
-				}*/
+
+				/*
+				 * if (event.getAction() == MotionEvent.ACTION_UP) { x =
+				 * event.getX(); y = event.getY(); }
+				 */
 
 				if (event.getAction() == MotionEvent.ACTION_MOVE) {
 					command = MouseConstant.MOUSE_MOVE_COMMAND;
 					Coordinates coo = new Coordinates();
-					coo.setX((int)(event.getX() - x));
-					coo.setY((int)(event.getY() - y));
-					
+					coo.setX((int) (event.getX() - x));
+					coo.setY((int) (event.getY() - y));
 
 					SenderData senderData = new SenderData();
 					senderData.setCommand(command);
@@ -276,4 +278,15 @@ public class FragmentRemoteControl extends Fragment {
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 	}
 
+	@Override
+	public void onDestroyView() {
+		Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
+				R.id.content_frame);
+		FragmentTransaction fragTransaction = getActivity()
+				.getSupportFragmentManager().beginTransaction();
+		fragTransaction.remove(fragment);
+		fragTransaction.commit();
+
+		super.onDestroyView();
+	}
 }

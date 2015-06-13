@@ -28,7 +28,7 @@ public class ProcessSendControlCommand extends AsyncTask<Void, Void, Void> {
 	// nhiều lần sẽ bị lỗi Socket EADDRINUSE (Address already in use)
 	private DatagramSocket mDatagramSoc = null;
 	private String mServerIP = "";
-
+	
 	public ProcessSendControlCommand(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket, String mServerIP) {
 		this.mSenderData = mSenderData;

@@ -40,7 +40,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
 
         <Button
             android:id="@+id/btnMiddleMouse"
-            android:layout_width="30dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:textColor="@color/White" />
 

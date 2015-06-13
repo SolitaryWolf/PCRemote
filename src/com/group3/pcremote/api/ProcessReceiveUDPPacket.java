@@ -118,9 +118,9 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 		} else if (command.equals(SocketConstant.CONNECT_ACCEPT)
 				|| command.equals(SocketConstant.CONNECT_REFUSE)) {
 			Log.d("Socket", "Receive connection signal");
+			// lấy fragment hiện tại
 			Fragment f = mContext.getActivity().getSupportFragmentManager()
-					.findFragmentById(R.id.content_frame); // lấy fragment hiện
-															// tại
+					.findFragmentById(R.id.content_frame);
 			if (f instanceof FragmentControl) {
 				((FragmentControl) f).dismissProgressBar();
 				((FragmentControl) f).cancelRequestTimeoutConnection();

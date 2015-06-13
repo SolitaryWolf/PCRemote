@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/MainColor" >
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/tvNetworkConnection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/White" />
+        android:textColor="@color/MainColor" />
 
     <!-- <View
         android:layout_width="match_parent"
@@ -32,9 +31,9 @@
             android:id="@+id/tvAvailableDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/AliceBlue"
+            android:background="@color/MainColor"
             android:text="Available Devices"
-            android:textColor="@color/MainColor"
+            android:textColor="@color/White"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
@@ -56,9 +55,9 @@
             android:id="@+id/tvHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/AliceBlue"
+            android:background="@color/MainColor"
             android:text="History"
-            android:textColor="@color/MainColor"
+            android:textColor="@color/White"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>

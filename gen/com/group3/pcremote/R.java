@@ -168,19 +168,20 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int buttonshape=0x7f020000;
-        public static final int ic_about=0x7f020001;
-        public static final int ic_control=0x7f020002;
-        public static final int ic_drawer=0x7f020003;
-        public static final int ic_feedback=0x7f020004;
-        public static final int ic_help=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int ic_refresh=0x7f020007;
-        public static final int ic_setting=0x7f020008;
+        public static final int about_logo=0x7f020000;
+        public static final int buttonshape=0x7f020001;
+        public static final int ic_about=0x7f020002;
+        public static final int ic_control=0x7f020003;
+        public static final int ic_drawer=0x7f020004;
+        public static final int ic_feedback=0x7f020005;
+        public static final int ic_help=0x7f020006;
+        public static final int ic_launcher=0x7f020007;
+        public static final int ic_refresh=0x7f020008;
+        public static final int ic_setting=0x7f020009;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f0a002c;
-        public static final int action_refresh=0x7f0a0041;
+        public static final int action_refresh=0x7f0a0042;
         public static final int btnAlt1=0x7f0a0014;
         public static final int btnAlt2=0x7f0a0025;
         public static final int btnCaps=0x7f0a0020;
@@ -206,20 +207,20 @@ public final class R {
         public static final int btnHome=0x7f0a0019;
         public static final int btnIns=0x7f0a001b;
         public static final int btnLeft=0x7f0a0026;
-        public static final int btnLeftMouse=0x7f0a003a;
-        public static final int btnMiddleMouse=0x7f0a003b;
+        public static final int btnLeftMouse=0x7f0a003b;
+        public static final int btnMiddleMouse=0x7f0a003c;
         public static final int btnMore1=0x7f0a0012;
         public static final int btnMore2=0x7f0a0023;
         public static final int btnNumLock=0x7f0a001f;
         public static final int btnPgDown=0x7f0a0022;
         public static final int btnPgUp=0x7f0a001d;
         public static final int btnRight=0x7f0a0028;
-        public static final int btnRightMouse=0x7f0a003c;
-        public static final int btnSendFeedback=0x7f0a0036;
+        public static final int btnRightMouse=0x7f0a003d;
+        public static final int btnSendFeedback=0x7f0a0037;
         public static final int btnShift=0x7f0a0016;
-        public static final int btnShowSpecialKeyboard=0x7f0a003f;
-        public static final int btnShowSystemControl=0x7f0a0040;
-        public static final int btnShowVirtualKeyboard=0x7f0a003e;
+        public static final int btnShowSpecialKeyboard=0x7f0a0040;
+        public static final int btnShowSystemControl=0x7f0a0041;
+        public static final int btnShowVirtualKeyboard=0x7f0a003f;
         public static final int btnTab=0x7f0a0017;
         public static final int btnUp=0x7f0a0021;
         public static final int btnWin=0x7f0a0015;
@@ -230,21 +231,22 @@ public final class R {
         public static final int itemLayout=0x7f0a0029;
         public static final int left_drawer=0x7f0a0002;
         public static final int linearLayout=0x7f0a002d;
-        public static final int linearLayoutBottomMenu=0x7f0a003d;
-        public static final int linearLayoutMouseButton=0x7f0a0039;
+        public static final int linearLayoutBottomMenu=0x7f0a003e;
+        public static final int linearLayoutMouseButton=0x7f0a003a;
         public static final int linearRow1_1=0x7f0a0003;
         public static final int linearRow1_2=0x7f0a000a;
         public static final int linearRow1_3=0x7f0a0011;
-        public static final int lvAvailableDevice=0x7f0a0032;
-        public static final int lvHistory=0x7f0a0034;
-        public static final int relativeLayoutTouchpad=0x7f0a0037;
-        public static final int tvAvailableDevice=0x7f0a0031;
-        public static final int tvHistory=0x7f0a0033;
-        public static final int tvNetworkConnection=0x7f0a0030;
+        public static final int lvAvailableDevice=0x7f0a0033;
+        public static final int lvHistory=0x7f0a0035;
+        public static final int relativeLayoutTouchpad=0x7f0a0038;
+        public static final int tvAboutContent=0x7f0a0030;
+        public static final int tvAvailableDevice=0x7f0a0032;
+        public static final int tvHistory=0x7f0a0034;
+        public static final int tvNetworkConnection=0x7f0a0031;
         public static final int tvServerIP=0x7f0a002f;
         public static final int tvServerName=0x7f0a002e;
-        public static final int txtFeedbackContent=0x7f0a0035;
-        public static final int txtKeyPress=0x7f0a0038;
+        public static final int txtFeedbackContent=0x7f0a0036;
+        public static final int txtKeyPress=0x7f0a0039;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
