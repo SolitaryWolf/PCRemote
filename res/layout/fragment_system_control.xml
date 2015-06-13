@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:gravity="center_horizontal" >
+        <Button 
+            android:id="@+id/btnShutdown"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/shutdown" />
+        <Button 
+            android:id="@+id/btnRestart"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/restart" />
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:gravity="center_horizontal" >
+        <Button 
+            android:id="@+id/btnSleep"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/sleep" />
+        <Button 
+            android:id="@+id/btnLogoff"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/logoff" />
+    </LinearLayout>
+
+</LinearLayout>

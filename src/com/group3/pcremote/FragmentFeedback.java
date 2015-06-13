@@ -61,4 +61,11 @@ public class FragmentFeedback extends Fragment {
 
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// change navigation drawer when press back
+		((MainActivity) getActivity()).changeNavigationDrawerItem(2);
+	}
 }

@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/touchpad" >
 
     <RelativeLayout
         android:id="@+id/relativeLayoutTouchpad"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/MainColor" >
+        android:layout_weight="1" >
 
 <!-- android:inputType="textNoSuggestions" is used because "This happens because in cases where the user types a space, 
 certain devices will capitalize the previous word (if it is the first word and inputType="name"). 
@@ -28,8 +28,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
         android:id="@+id/linearLayoutMouseButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/MainColor" >
+        android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btnLeftMouse"
@@ -56,7 +55,6 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
         android:id="@+id/linearLayoutBottomMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/MainColor"
         android:orientation="horizontal" >
 
         <Button
@@ -68,11 +66,11 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:textColor="@color/White" />
 
         <Button
-            android:id="@+id/btnShowSpecialKeyboard"
+            android:id="@+id/btnShowAdditionalKeyboard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Special keyboard"
+            android:text="Additional keyboard"
             android:textColor="@color/White" />
 
         <Button
@@ -83,5 +81,10 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:text="System"
             android:textColor="@color/White" />
     </LinearLayout>
+    
+    <FrameLayout
+        android:id="@+id/frameLayoutBottomMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

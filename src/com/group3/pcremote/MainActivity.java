@@ -120,6 +120,7 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	// =============Navigation drawer=============================//
 	/*
 	 * Add Drawer Item to Drawer item list
 	 */
@@ -132,23 +133,51 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	public void selectItem(int possition) {
+	public void selectItem(int position) {
+		Fragment f = getSupportFragmentManager().findFragmentById(
+				R.id.content_frame);
 
 		Fragment fragment = null;
-		switch (possition) {
+		switch (position) {
 		case 0:
+			if (f instanceof FragmentControl) 
+			{
+				mDrawerLayout.closeDrawer(lvDrawer);
+				return;
+			}
+				
 			fragment = new FragmentControl();
 			break;
 		case 1:
+			if (f instanceof FragmentSetting) 
+			{
+				mDrawerLayout.closeDrawer(lvDrawer);
+				return;
+			}
 			fragment = new FragmentSetting();
 			break;
 		case 2:
+			if (f instanceof FragmentFeedback) 
+			{
+				mDrawerLayout.closeDrawer(lvDrawer);
+				return;
+			}
 			fragment = new FragmentFeedback();
 			break;
 		case 3:
+			if (f instanceof FragmentHelp) 
+			{
+				mDrawerLayout.closeDrawer(lvDrawer);
+				return;
+			}
 			fragment = new FragmentHelp();
 			break;
 		case 4:
+			if (f instanceof FragmentAbout) 
+			{
+				mDrawerLayout.closeDrawer(lvDrawer);
+				return;
+			}
 			fragment = new FragmentAbout();
 			break;
 
@@ -159,16 +188,15 @@ public class MainActivity extends FragmentActivity {
 		FragmentManager fragManager = getSupportFragmentManager();
 		FragmentTransaction fragTransaction = fragManager.beginTransaction();
 		// để khi ấn back quay về cửa sổ trước đó
-		// fragTransaction.addToBackStack(null);
+		fragTransaction.addToBackStack(null);
 		fragTransaction.replace(R.id.content_frame, fragment).commit();
 
-		lvDrawer.setItemChecked(possition, true);
-		setTitle(mLDrawerItem.get(possition).getItemName());
+		//lvDrawer.setItemChecked(position, true);
+		//setTitle(mLDrawerItem.get(position).getItemName());
 		mDrawerLayout.closeDrawer(lvDrawer);
 
 	}
 
-	// =============Navigation drawer=============================//
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
@@ -198,6 +226,12 @@ public class MainActivity extends FragmentActivity {
 			selectItem(position);
 
 		}
+	}
+	
+	public void changeNavigationDrawerItem(int position)
+	{
+		lvDrawer.setItemChecked(position, true);
+		setTitle(mLDrawerItem.get(position).getItemName());
 	}
 
 	// ================================================================//
@@ -299,6 +333,12 @@ public class MainActivity extends FragmentActivity {
 				}, 2000);
 				getFragmentManager().popBackStack();
 			}
+			else if (f instanceof FragmentControl) {
+				// do quay về lúc chưa có fragment nào nên tắt app luôn
+				finish();
+			}
+			else
+				super.onBackPressed();
 		}
 	}
 }

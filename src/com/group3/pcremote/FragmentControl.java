@@ -370,35 +370,40 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	@Override
 	public void onPause() {
-		super.onPause();
-
 		cancelRequestTimeoutConnection();
 		cancelSendRequestConnect();
 		cancelSendBroadcast();
 		cancelReceiveDataFromServer();
+		
+		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
+		// change navigation drawer when press back
+		((MainActivity)getActivity()).changeNavigationDrawerItem(0);
+		
+		mIsConnected = false;
+		mConnectedServerIP = "";
 		receiveBroadcastWifiChange();
 	}
 
 	@Override
 	public void onDestroyView() {
+		
 		// hủy đăng ký
 		if (broadcastRecWifiChange != null)
 			getActivity().unregisterReceiver(broadcastRecWifiChange);
-		
-		Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
+		super.onDestroyView();
+		/*Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
 				R.id.content_frame);
 		FragmentTransaction fragTransaction = getActivity()
 				.getSupportFragmentManager().beginTransaction();
 		fragTransaction.remove(fragment);
-		fragTransaction.commit();
-		
-		super.onDestroyView();
+		fragTransaction.commit();*/
+			
 	}
 	
 }

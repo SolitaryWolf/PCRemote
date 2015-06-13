@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- custom lại android:activatedBackgroundIndicator theo ý mình -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/MyLightBlue" android:state_activated="true"/>
+    <item android:drawable="@color/MyLightLightBlue" android:state_pressed="true"/>
+    <item android:drawable="@android:color/transparent"/>
+
+</selector>

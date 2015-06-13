@@ -142,5 +142,7 @@
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
  	<color name="MainColor">#01579b</color>
+ 	<color name="MyLightBlue">#29b6f6</color>
+ 	<color name="MyLightLightBlue">#81d4fa</color>
 
 </resources>

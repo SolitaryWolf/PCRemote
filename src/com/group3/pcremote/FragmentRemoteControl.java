@@ -1,10 +1,10 @@
 package com.group3.pcremote;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,6 +36,8 @@ public class FragmentRemoteControl extends Fragment {
 	private Button btnRightMouse;
 	private Button btnMiddleMouse;
 	private Button btnShowVirtualKeyboard;
+	private Button btnShowAdditionalKeyboard;
+	private Button btnShowSystemControl;
 	private KeyboardEditText txtKeyPress;
 	private RelativeLayout relativeLayoutTouchpad;
 
@@ -63,6 +65,10 @@ public class FragmentRemoteControl extends Fragment {
 		btnMiddleMouse = (Button) rootView.findViewById(R.id.btnMiddleMouse);
 		btnShowVirtualKeyboard = (Button) rootView
 				.findViewById(R.id.btnShowVirtualKeyboard);
+		btnShowAdditionalKeyboard = (Button) rootView
+				.findViewById(R.id.btnShowAdditionalKeyboard);
+		btnShowSystemControl = (Button) rootView
+				.findViewById(R.id.btnShowSystemControl);
 
 		txtKeyPress = (KeyboardEditText) rootView
 				.findViewById(R.id.txtKeyPress);
@@ -148,6 +154,60 @@ public class FragmentRemoteControl extends Fragment {
 			public void onClick(View v) {
 				txtKeyPress.requestFocus();
 				openVirtualKeyboard();
+			}
+		});
+
+		btnShowAdditionalKeyboard
+				.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Fragment f = getActivity().getSupportFragmentManager()
+								.findFragmentById(R.id.frameLayoutBottomMenu);
+						if (f instanceof FragmentAdditionalKey1
+								|| f instanceof FragmentAdditionalKey2) {
+							getActivity().getSupportFragmentManager()
+									.beginTransaction().remove(f).commit();
+							return;
+						}
+						Fragment fragment = null;
+						fragment = new FragmentAdditionalKey1();
+						FragmentManager fragManager = getActivity()
+								.getSupportFragmentManager();
+						FragmentTransaction fragTransaction = fragManager
+								.beginTransaction();
+						// để khi ấn back quay về cửa sổ trước đó
+						// fragTransaction.addToBackStack(null);
+						fragTransaction.replace(R.id.frameLayoutBottomMenu,
+								fragment).commit();
+
+					}
+				});
+
+		btnShowSystemControl.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Fragment f = getActivity().getSupportFragmentManager()
+						.findFragmentById(R.id.frameLayoutBottomMenu);
+				if (
+
+				f instanceof FragmentSystemControl) {
+					getActivity().getSupportFragmentManager()
+							.beginTransaction().remove(f).commit();
+					return;
+				}
+				Fragment fragment = null;
+				fragment = new FragmentSystemControl();
+				FragmentManager fragManager = getActivity()
+						.getSupportFragmentManager();
+				FragmentTransaction fragTransaction = fragManager
+						.beginTransaction();
+				// để khi ấn back quay về cửa sổ trước đó
+				// fragTransaction.addToBackStack(null);
+				fragTransaction.replace(R.id.frameLayoutBottomMenu, fragment)
+						.commit();
+
 			}
 		});
 
@@ -276,17 +336,5 @@ public class FragmentRemoteControl extends Fragment {
 		InputMethodManager imm = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-	}
-
-	@Override
-	public void onDestroyView() {
-		Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
-				R.id.content_frame);
-		FragmentTransaction fragTransaction = getActivity()
-				.getSupportFragmentManager().beginTransaction();
-		fragTransaction.remove(fragment);
-		fragTransaction.commit();
-
-		super.onDestroyView();
 	}
 }

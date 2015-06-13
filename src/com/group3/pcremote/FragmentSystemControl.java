@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FragmentSetting extends Fragment {
+public class FragmentSystemControl extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_layout_setting,
+		View rootView = inflater.inflate(R.layout.fragment_system_control,
 				container, false);
 
 		getFormWidgets(rootView);
@@ -21,18 +21,11 @@ public class FragmentSetting extends Fragment {
 	}
 
 	private void getFormWidgets(View rootView) {
-
+		
 	}
 
 	private void addEventToFormWidget(View rootView) {
 
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		// change navigation drawer when press back
-		((MainActivity) getActivity()).changeNavigationDrawerItem(1);
-	}
 }
