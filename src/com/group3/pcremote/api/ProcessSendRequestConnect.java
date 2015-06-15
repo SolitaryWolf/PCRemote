@@ -56,6 +56,7 @@ public class ProcessSendRequestConnect extends AsyncTask<Void, Void, Void> {
 						addr, SocketConstant.PORT);
 
 				mDatagramSoc.send(packet);
+				Log.d("Socket", "Send request connect");
 
 			} catch (IOException e) {
 				Log.e("Socket", e.getMessage());

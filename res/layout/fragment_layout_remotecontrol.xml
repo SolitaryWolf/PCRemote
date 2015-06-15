@@ -59,27 +59,28 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
 
         <Button
             android:id="@+id/btnShowVirtualKeyboard"
+            style="@style/button_virtual"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Virtual Keyboard"
-            style="@style/button_virtual" />
+            android:text="Virtual Keyboard" />
 
         <Button
             android:id="@+id/btnShowAdditionalKeyboard"
+            style="@style/button_virtual"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Additional keyboard"
-            style="@style/button_virtual" />
+            android:text="Additional keyboard" />
 
         <Button
             android:id="@+id/btnShowSystemControl"
+            style="@style/button_virtual"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="System"
-            style="@style/button_virtual" />
+            android:text="System" />
+
     </LinearLayout>
     
     <FrameLayout
