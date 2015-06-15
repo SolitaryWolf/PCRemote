@@ -347,20 +347,20 @@ public class KeyboardConstant {
     public static final int VK_DEAD_SEMIVOICED_SOUND    = 0x8f;
 
     /** @since 1.2 */
-    public static final int VK_AMPERSAND                = 0x96;
+//    public static final int VK_AMPERSAND                = 0x96;
     /** @since 1.2 */
     public static final int VK_ASTERISK                 = 0x97;
     /** @since 1.2 */
     public static final int VK_QUOTEDBL                 = 0x98;
     /** @since 1.2 */
-    public static final int VK_LESS                     = 0x99;
-
-    /** @since 1.2 */
-    public static final int VK_GREATER                  = 0xa0;
-    /** @since 1.2 */
-    public static final int VK_BRACELEFT                = 0xa1;
-    /** @since 1.2 */
-    public static final int VK_BRACERIGHT               = 0xa2;
+//    public static final int VK_LESS                     = 0x99;
+//
+//    /** @since 1.2 */
+//    public static final int VK_GREATER                  = 0xa0;
+//    /** @since 1.2 */
+//    public static final int VK_BRACELEFT                = 0xa1;
+//    /** @since 1.2 */
+//    public static final int VK_BRACERIGHT               = 0xa2;
 
     /**
      * Constant for the "@" key.
@@ -578,35 +578,77 @@ public class KeyboardConstant {
     /* Japanese PC 106 keyboard: kanji. Japanese Solaris keyboard: nihongo */
     public static final int VK_INPUT_METHOD_ON_OFF      = 0x0107;
 
-    /* for Sun keyboards */
-    /** @since 1.2 */
-    public static final int VK_CUT                      = 0xFFD1;
-    /** @since 1.2 */
-    public static final int VK_COPY                     = 0xFFCD;
-    /** @since 1.2 */
-    public static final int VK_PASTE                    = 0xFFCF;
-    /** @since 1.2 */
-    public static final int VK_UNDO                     = 0xFFCB;
-    /** @since 1.2 */
-    public static final int VK_AGAIN                    = 0xFFC9;
-    /** @since 1.2 */
-    public static final int VK_FIND                     = 0xFFD0;
-    /** @since 1.2 */
-    public static final int VK_PROPS                    = 0xFFCA;
-    /** @since 1.2 */
-    public static final int VK_STOP                     = 0xFFC8;
-
+    /* for some character that not avaiable in orginial java.awt.KeyEvent */
     /**
-     * Constant for the Compose function key.
+     * Constant for the vertical bar key, "|"
      * @since 1.2
      */
-    public static final int VK_COMPOSE                  = 0xFF20;
-
+    public static final int VK_VERTICAL_BAR             = 0xFFD1;
     /**
-     * Constant for the AltGraph function key.
+     * Constant for the tilde key, "~"
      * @since 1.2
      */
-    public static final int VK_ALT_GRAPH                = 0xFF7E;
+    public static final int VK_TILDE                    = 0xFFCD;
+    
+    /**
+     * Constant for the percent key, "%"
+     * @since 1.2
+     */
+    public static final int VK_PERCENT                   = 0xFFCF;
+    /**
+     * Constant for the percent key, "?"
+     * @since 1.2
+     */
+    public static final int VK_QUESTION                     = 0xFFCB;
+    /**
+     * Constant for the double quote key, "\""
+     * @since 1.2
+     */
+    public static final int VK_DOUBLE_QUOTE                    = 0xFFC9;
+    /**
+     * Constant for the ampers and key, "&"
+     * @since 1.2
+     */
+    public static final int VK_AMPERSAND                = 0xFFD0;
+    
+    /**
+     * Constant for the less key, "<"
+     * @since 1.2
+     */
+    public static final int VK_LESS                     = 0xFFCA;
+
+    /**
+     * Constant for the greater key, ">"
+     * @since 1.2
+     */
+    public static final int VK_GREATER                  = 0xFFC8;
+    /**
+     * Constant for the brace left key, "{"
+     * @since 1.2
+     */
+    public static final int VK_BRACELEFT                = 0xFF20;
+    /**
+     * Constant for the brace right key, "}"
+     * @since 1.2
+     */
+    public static final int VK_BRACERIGHT               = 0xFF7E;
+    
+//    /** @since 1.2 */
+//    public static final int VK_PROPS                    = 0xFFCA;
+//    /** @since 1.2 */
+//    public static final int VK_STOP                     = 0xFFC8;
+//
+//    /**
+//     * Constant for the Compose function key.
+//     * @since 1.2
+//     */
+//    public static final int VK_COMPOSE                  = 0xFF20;
+//
+//    /**
+//     * Constant for the AltGraph function key.
+//     * @since 1.2
+//     */
+//    public static final int VK_ALT_GRAPH                = 0xFF7E;
 
     /**
      * Constant for the Begin key.

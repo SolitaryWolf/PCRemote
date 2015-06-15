@@ -19,7 +19,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:id="@+id/txtKeyPress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textPassword|textVisiblePassword"
             android:textColor="@color/White"
             android:textCursorDrawable="@null" />
     </RelativeLayout>

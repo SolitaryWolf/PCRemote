@@ -193,8 +193,38 @@ public class KeyboardUtils {
 		case '#':
 			keycode = KeyboardConstant.VK_NUMBER_SIGN;
 			break;
+		case '&':
+			keycode = KeyboardConstant.VK_AMPERSAND;
+			break;
 		case '_':
 			keycode = KeyboardConstant.VK_UNDERSCORE;
+			break;
+		case '%':
+			keycode = KeyboardConstant.VK_PERCENT;
+			break;
+		case '~':
+			keycode = KeyboardConstant.VK_TILDE;
+			break;
+		case '|':
+			keycode = KeyboardConstant.VK_VERTICAL_BAR;
+			break;
+		case '{' :
+			keycode = KeyboardConstant.VK_BRACELEFT;
+			break;
+		case '}':
+			keycode = KeyboardConstant.VK_BRACERIGHT;
+			break;
+		case '<':
+			keycode = KeyboardConstant.VK_LESS;
+			break;
+		case '>':
+			keycode = KeyboardConstant.VK_GREATER;
+			break;
+		case '\"':
+			keycode = KeyboardConstant.VK_DOUBLE_QUOTE;
+			break;
+		case '?':
+			keycode = KeyboardConstant.VK_QUESTION;
 			break;
 		}
 

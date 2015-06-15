@@ -152,6 +152,15 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public void onClick(View v) {
+				Fragment f = getActivity().getSupportFragmentManager()
+						.findFragmentById(R.id.frameLayoutBottomMenu);
+				if (f instanceof FragmentAdditionalKey1
+						|| f instanceof FragmentAdditionalKey2
+						|| f instanceof FragmentSystemControl) {
+					getActivity().getSupportFragmentManager()
+							.beginTransaction().remove(f).commit();
+				}
+				
 				txtKeyPress.requestFocus();
 				openVirtualKeyboard();
 			}
