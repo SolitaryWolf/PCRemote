@@ -80,8 +80,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				} else if (mSenderData.getCommand().equals(
 						SocketConstant.CONNECT_ACCEPT)
 						&& !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk
-							.getAddress().getHostName())) {
+					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = true;
 						publishProgress(SocketConstant.CONNECT_ACCEPT);
 					}
@@ -90,8 +89,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				else if (mSenderData.getCommand().equals(
 						SocketConstant.CONNECT_REFUSE)
 						&& !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk
-							.getAddress().getHostName())) {
+					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = false;
 						publishProgress(SocketConstant.CONNECT_REFUSE);
 					}
