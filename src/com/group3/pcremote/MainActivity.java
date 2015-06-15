@@ -29,8 +29,10 @@ import android.widget.Toast;
 import com.group3.pcremote.adapter.CustomDrawerAdapter;
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.model.ClientInfo;
 import com.group3.pcremote.model.DrawerItem;
 import com.group3.pcremote.model.SenderData;
+import com.group3.pcremote.utils.NetworkUtils;
 
 public class MainActivity extends FragmentActivity {
 	// navigation drawer
@@ -312,7 +314,11 @@ public class MainActivity extends FragmentActivity {
 					SenderData senderData = new SenderData();
 					senderData
 							.setCommand(SocketConstant.NOTIFY_DISCONNECT_FROM_CLIENT);
-					senderData.setData(null);
+					ClientInfo clientInfo = new ClientInfo();
+					clientInfo.setClientIP(NetworkUtils.getIPAddress(true));
+					clientInfo.setClientName(NetworkUtils.getDeviceName());
+					
+					senderData.setData(clientInfo);
 					new ProcessSendControlCommand(f, senderData,
 							FragmentControl.mDatagramSoc,
 							FragmentControl.mConnectedServerIP).execute();
