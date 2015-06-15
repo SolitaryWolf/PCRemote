@@ -35,20 +35,20 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
 
         <Button
             android:id="@+id/btnMiddleMouse"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
 
         <Button
             android:id="@+id/btnRightMouse"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +63,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Virtual Keyboard"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
 
         <Button
             android:id="@+id/btnShowAdditionalKeyboard"
@@ -71,7 +71,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Additional keyboard"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
 
         <Button
             android:id="@+id/btnShowSystemControl"
@@ -79,7 +79,7 @@ Therefore, afterTextChanged gets called twice. Once for the space, and once for 
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="System"
-            android:textColor="@color/White" />
+            style="@style/button_virtual" />
     </LinearLayout>
     
     <FrameLayout

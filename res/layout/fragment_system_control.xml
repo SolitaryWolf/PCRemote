@@ -9,31 +9,33 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_weight="1"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal"
+        android:background="@color/MainColor"
+        android:layout_margin="5dp" >
         <Button 
             android:id="@+id/btnShutdown"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/shutdown" />
         <Button 
             android:id="@+id/btnRestart"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/restart" />
         <Button 
             android:id="@+id/btnHibernate"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/hibernate" />
         <Button 
             android:id="@+id/btnSleep"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/sleep" />
         <Button 
             android:id="@+id/btnLogoff"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/logoff" />
     </LinearLayout>
 
