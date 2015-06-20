@@ -367,7 +367,7 @@ public class FragmentRemoteControl extends Fragment {
 				
 				new ProcessSendMaintainConnection(FragmentRemoteControl.this,
 						senderData, FragmentControl.mDatagramSoc,
-						FragmentControl.mConnectedServerIP);
+						FragmentControl.mConnectedServerIP).execute();
 			}
 		}, 1000);
 		

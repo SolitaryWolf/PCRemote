@@ -2,7 +2,7 @@ package com.group3.pcremote.api;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-
+import android.util.Log;
 import com.group3.pcremote.FragmentControl;
 
 public class ProcessCheckMaintainedConnection extends
@@ -21,13 +21,13 @@ public class ProcessCheckMaintainedConnection extends
 
 				try {
 					Thread.sleep(5000);
+					Log.d("Socket", "Check maintain connection");
 					result = FragmentControl.mIsMaintainedConnection;
 					FragmentControl.mIsMaintainedConnection = true;
+					publishProgress(result);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}
-
-				publishProgress(result);
+				}		
 			}
 		}
 

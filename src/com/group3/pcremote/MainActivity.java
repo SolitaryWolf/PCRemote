@@ -341,7 +341,7 @@ public class MainActivity extends ActionBarActivity {
 						isPressBackDoubleToDisconnect = false;
 					}
 				}, 2000);
-				getFragmentManager().popBackStack();
+				getSupportFragmentManager().popBackStack();
 			} else if (f instanceof FragmentControl) {
 				// do quay về lúc chưa có fragment nào nên tắt app luôn
 				finish();

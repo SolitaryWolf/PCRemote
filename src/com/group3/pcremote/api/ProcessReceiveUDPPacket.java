@@ -94,11 +94,12 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				
 				else if (mSenderData.getCommand().equals(SocketConstant.MAINTAIN_CONNECTION))
 				{
+					Log.d("Socket", "Receive maintained connection");
 					// lấy fragment hiện tại
 					Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(
 							R.id.content_frame);
-
-					publishProgress(SocketConstant.MAINTAIN_CONNECTION);
+					if (f instanceof FragmentRemoteControl)
+						publishProgress(SocketConstant.MAINTAIN_CONNECTION);
 				}				
 			}
 
