@@ -3,7 +3,7 @@ package com.group3.pcremote;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ActionBar;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -14,13 +14,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,7 +36,7 @@ import com.group3.pcremote.model.DrawerItem;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.utils.NetworkUtils;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends ActionBarActivity {
 	// navigation drawer
 	private DrawerLayout mDrawerLayout;
 	private ListView lvDrawer;
@@ -51,15 +53,23 @@ public class MainActivity extends FragmentActivity {
 
 	private boolean isPressBackDoubleToDisconnect = false;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// prevent screen to dim
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
-		ActionBar bar = getActionBar();
+
+		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 21) {
+			Window window = getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(getResources().getColor(R.color.MainColor));
+		}
+
+		ActionBar bar = getSupportActionBar();
 		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#01579b")));
 
 		getFormWidgets();
@@ -99,20 +109,20 @@ public class MainActivity extends FragmentActivity {
 	private void addEventToFormWidgets() {
 		lvDrawer.setOnItemClickListener(new DrawerItemClickListener());
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+				getSupportActionBar().setTitle(mTitle);
 				// creates call to onPrepareOptionsMenu()
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
+				getSupportActionBar().setTitle(mDrawerTitle);
 				// creates call to onPrepareOptionsMenu()
 				invalidateOptionsMenu();
 			}
@@ -142,41 +152,36 @@ public class MainActivity extends FragmentActivity {
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
-			if (f instanceof FragmentControl) 
-			{
+			if (f instanceof FragmentControl) {
 				mDrawerLayout.closeDrawer(lvDrawer);
 				return;
 			}
-				
+
 			fragment = new FragmentControl();
 			break;
 		case 1:
-			if (f instanceof FragmentSetting) 
-			{
+			if (f instanceof FragmentSetting) {
 				mDrawerLayout.closeDrawer(lvDrawer);
 				return;
 			}
 			fragment = new FragmentSetting();
 			break;
 		case 2:
-			if (f instanceof FragmentFeedback) 
-			{
+			if (f instanceof FragmentFeedback) {
 				mDrawerLayout.closeDrawer(lvDrawer);
 				return;
 			}
 			fragment = new FragmentFeedback();
 			break;
 		case 3:
-			if (f instanceof FragmentHelp) 
-			{
+			if (f instanceof FragmentHelp) {
 				mDrawerLayout.closeDrawer(lvDrawer);
 				return;
 			}
 			fragment = new FragmentHelp();
 			break;
 		case 4:
-			if (f instanceof FragmentAbout) 
-			{
+			if (f instanceof FragmentAbout) {
 				mDrawerLayout.closeDrawer(lvDrawer);
 				return;
 			}
@@ -193,8 +198,8 @@ public class MainActivity extends FragmentActivity {
 		fragTransaction.addToBackStack(null);
 		fragTransaction.replace(R.id.content_frame, fragment).commit();
 
-		//lvDrawer.setItemChecked(position, true);
-		//setTitle(mLDrawerItem.get(position).getItemName());
+		// lvDrawer.setItemChecked(position, true);
+		// setTitle(mLDrawerItem.get(position).getItemName());
 		mDrawerLayout.closeDrawer(lvDrawer);
 
 	}
@@ -202,7 +207,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
-		getActionBar().setTitle(mTitle);
+		getSupportActionBar().setTitle(mTitle);
 	}
 
 	@Override
@@ -229,9 +234,8 @@ public class MainActivity extends FragmentActivity {
 
 		}
 	}
-	
-	public void changeNavigationDrawerItem(int position)
-	{
+
+	public void changeNavigationDrawerItem(int position) {
 		lvDrawer.setItemChecked(position, true);
 		setTitle(mLDrawerItem.get(position).getItemName());
 	}
@@ -317,7 +321,7 @@ public class MainActivity extends FragmentActivity {
 					ClientInfo clientInfo = new ClientInfo();
 					clientInfo.setClientIP(NetworkUtils.getIPAddress(true));
 					clientInfo.setClientName(NetworkUtils.getDeviceName());
-					
+
 					senderData.setData(clientInfo);
 					new ProcessSendControlCommand(f, senderData,
 							FragmentControl.mDatagramSoc,
@@ -338,12 +342,10 @@ public class MainActivity extends FragmentActivity {
 					}
 				}, 2000);
 				getFragmentManager().popBackStack();
-			}
-			else if (f instanceof FragmentControl) {
+			} else if (f instanceof FragmentControl) {
 				// do quay về lúc chưa có fragment nào nên tắt app luôn
 				finish();
-			}
-			else
+			} else
 				super.onBackPressed();
 		}
 	}

@@ -10,4 +10,6 @@ public final class SocketConstant {
 	public static final String CONNECT_REFUSE = "ConnectRefuse";
 	public static final String NOTIFY_DISCONNECT_FROM_CLIENT = "DisconnectFromClient";
 	public static final String NOTIFY_DISCONNECT_FROM_SERVER = "DisconnectFromServer";
+	public static final String MAINTAIN_CONNECTION = "MaintainConnection";
+	public static final String CONNECT_ALIVE = "ConnectAlive";
 }

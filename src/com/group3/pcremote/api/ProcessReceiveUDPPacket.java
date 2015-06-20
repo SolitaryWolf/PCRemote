@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.group3.pcremote.FragmentControl;
+import com.group3.pcremote.FragmentRemoteControl;
 import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
@@ -90,6 +91,15 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 						publishProgress(SocketConstant.CONNECT_REFUSE);
 					}
 				}
+				
+				else if (mSenderData.getCommand().equals(SocketConstant.MAINTAIN_CONNECTION))
+				{
+					// lấy fragment hiện tại
+					Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(
+							R.id.content_frame);
+
+					publishProgress(SocketConstant.MAINTAIN_CONNECTION);
+				}				
 			}
 
 		} catch (IOException e) {
@@ -128,5 +138,15 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				Toast.makeText(mContext.getActivity(), "Can't connect",
 						Toast.LENGTH_SHORT).show();
 		}
+		
+		else if (command.equals(SocketConstant.MAINTAIN_CONNECTION)) {
+			Fragment f = mContext.getActivity().getSupportFragmentManager()
+					.findFragmentById(R.id.content_frame);
+			if (f instanceof FragmentRemoteControl) {
+				// bật cờ duy trì connection
+				FragmentControl.mIsMaintainedConnection = true;
+			}
+		}
+				
 	}
 }

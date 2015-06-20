@@ -20,7 +20,7 @@ import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 
-public class ProcessSendRequestConnect extends AsyncTask<Void, Void, Void> {
+public class ProcessSendRequestConnection extends AsyncTask<Void, Void, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
 	// lý do phải để DatagramSocket vào hàm tạo bởi vì socket khi
@@ -29,7 +29,7 @@ public class ProcessSendRequestConnect extends AsyncTask<Void, Void, Void> {
 	private DatagramSocket mDatagramSoc = null;
 	private String mServerIP = "";
 
-	public ProcessSendRequestConnect(Fragment mContext, SenderData mSenderData,
+	public ProcessSendRequestConnection(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket, String mServerIP) {
 		this.mSenderData = mSenderData;
 		this.mContext = mContext;

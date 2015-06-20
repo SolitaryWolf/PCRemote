@@ -3,6 +3,7 @@ package com.group3.pcremote;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,8 +21,10 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessSendControlCommand;
+import com.group3.pcremote.api.ProcessSendMaintainConnection;
 import com.group3.pcremote.constant.KeyboardConstant;
 import com.group3.pcremote.constant.MouseConstant;
+import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.Coordinates;
 import com.group3.pcremote.model.KeyboardCommand;
 import com.group3.pcremote.model.KeyboardEditText;
@@ -46,6 +49,8 @@ public class FragmentRemoteControl extends Fragment {
 	private String command = "";
 
 	private static float x = 0, y = 0;
+	
+	private Handler mHandler = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,7 +165,7 @@ public class FragmentRemoteControl extends Fragment {
 					getActivity().getSupportFragmentManager()
 							.beginTransaction().remove(f).commit();
 				}
-				
+
 				txtKeyPress.requestFocus();
 				openVirtualKeyboard();
 			}
@@ -346,4 +351,31 @@ public class FragmentRemoteControl extends Fragment {
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		mHandler = new Handler();
+		mHandler.postDelayed(new Runnable() {
+			public void run() {
+				SenderData senderData = new SenderData();
+				senderData.setCommand(SocketConstant.MAINTAIN_CONNECTION);
+				senderData.setData(null);
+				
+				new ProcessSendMaintainConnection(FragmentRemoteControl.this,
+						senderData, FragmentControl.mDatagramSoc,
+						FragmentControl.mConnectedServerIP);
+			}
+		}, 1000);
+	}
+
+	@Override
+	public void onPause() {
+		mHandler.removeCallbacksAndMessages(null);
+		
+		super.onPause();
+	}
+	
+	
 }

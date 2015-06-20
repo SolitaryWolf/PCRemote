@@ -24,7 +24,7 @@ import com.group3.pcremote.adapter.HistoryAdapter;
 import com.group3.pcremote.adapter.ServerInfoAdapter;
 import com.group3.pcremote.api.ProcessReceiveUDPPacket;
 import com.group3.pcremote.api.ProcessRequestTimeoutConnection;
-import com.group3.pcremote.api.ProcessSendRequestConnect;
+import com.group3.pcremote.api.ProcessSendRequestConnection;
 import com.group3.pcremote.api.ProcessSendUDPPacket;
 import com.group3.pcremote.broadcast.WifiReceiver;
 import com.group3.pcremote.constant.SocketConstant;
@@ -57,7 +57,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	// process
 	private ProcessSendUDPPacket processSendUDPPacket = null;
 	private ProcessReceiveUDPPacket processReceiveUDPacket = null;
-	private ProcessSendRequestConnect processSendRequestConnect = null;
+	private ProcessSendRequestConnection processSendRequestConnect = null;
 	private ProcessRequestTimeoutConnection processRequestTimeoutConnection = null;
 
 	// socket
@@ -67,6 +67,8 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	public static boolean mIsConnected = false;
 	public static String mConnectedServerIP = "";
 	public static boolean mIsTimeOut = false;
+	public static boolean mIsMaintainedConnection = false;
+	public static int mCountTime = 0; // seconds
 
 	// progress dialog
 	private ProgressDialog mProgressDialog;
@@ -250,7 +252,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 		senderData.setData(clientInfo);
 
-		processSendRequestConnect = new ProcessSendRequestConnect(
+		processSendRequestConnect = new ProcessSendRequestConnection(
 				FragmentControl.this, senderData, mDatagramSoc, serverIP);
 		// ở các phiên bản từ HONEYCOMB trở đi thread sẽ chạy tuần tự nên
 		// nếu muốn chạy song song phải dùng AsyncTask.THREAD_POOL_EXECUTOR
