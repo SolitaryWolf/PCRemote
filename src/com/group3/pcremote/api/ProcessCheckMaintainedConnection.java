@@ -1,41 +1,44 @@
 package com.group3.pcremote.api;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.widget.Toast;
 
 import com.group3.pcremote.FragmentControl;
 
 public class ProcessCheckMaintainedConnection extends
-		AsyncTask<Void, Void, Boolean> {
+		AsyncTask<Void, Boolean, Void> {
 	private Fragment mContext;
+	private Boolean result;
 
 	public ProcessCheckMaintainedConnection(Fragment mContext) {
 		this.mContext = mContext;
 	}
 
 	@Override
-	protected Boolean doInBackground(Void... params) {
+	protected Void doInBackground(Void... params) {
 		while (!isCancelled()) {
-			if (FragmentControl.mIsConnected == true
-					&& FragmentControl.mCountTime == 5) {
-				FragmentControl.mCountTime = 0;
-				return FragmentControl.mIsMaintainedConnection;
+			if (FragmentControl.mIsConnected == true) {
+
+				try {
+					Thread.sleep(5000);
+					result = FragmentControl.mIsMaintainedConnection;
+					FragmentControl.mIsMaintainedConnection = true;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				publishProgress(result);
 			}
 		}
-		
-		return true;
+
+		return null;
 	}
 
 	@Override
-	protected void onPostExecute(Boolean result) {
-		if (result == false)
-		{
+	protected void onProgressUpdate(Boolean... values) {
+		if (values[0] == false)
 			mContext.getActivity().getSupportFragmentManager().popBackStack();
-		}
-			
-		super.onPostExecute(result);	
+		super.onProgressUpdate(values);
 	}
 
 }

@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.group3.pcremote.api.ProcessCheckMaintainedConnection;
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.api.ProcessSendMaintainConnection;
 import com.group3.pcremote.constant.KeyboardConstant;
@@ -45,6 +46,7 @@ public class FragmentRemoteControl extends Fragment {
 	private RelativeLayout relativeLayoutTouchpad;
 
 	private ProcessSendControlCommand mProcessSendControlCommand = null;
+	private ProcessCheckMaintainedConnection mProcessCheckMaintainedConnection = null;
 
 	private String command = "";
 
@@ -368,13 +370,22 @@ public class FragmentRemoteControl extends Fragment {
 						FragmentControl.mConnectedServerIP);
 			}
 		}, 1000);
+		
+		mProcessCheckMaintainedConnection = new ProcessCheckMaintainedConnection(FragmentRemoteControl.this);
+		mProcessCheckMaintainedConnection.execute();
 	}
 
 	@Override
 	public void onPause() {
 		mHandler.removeCallbacksAndMessages(null);
-		
+		cancelCheckMaintainedConnection();
 		super.onPause();
+	}
+	
+	public void cancelCheckMaintainedConnection() {
+		if (mProcessCheckMaintainedConnection != null
+				&& !mProcessCheckMaintainedConnection.isCancelled())
+			mProcessCheckMaintainedConnection.cancel(true);
 	}
 	
 	

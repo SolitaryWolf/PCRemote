@@ -68,7 +68,6 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	public static String mConnectedServerIP = "";
 	public static boolean mIsTimeOut = false;
 	public static boolean mIsMaintainedConnection = false;
-	public static int mCountTime = 0; // seconds
 
 	// progress dialog
 	private ProgressDialog mProgressDialog;
