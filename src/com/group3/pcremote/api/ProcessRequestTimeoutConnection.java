@@ -3,6 +3,7 @@ package com.group3.pcremote.api;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.group3.pcremote.FragmentControl;
@@ -29,7 +30,7 @@ public class ProcessRequestTimeoutConnection extends
 			FragmentControl.mIsTimeOut = false;
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Log.e("Socket", "Requesting timeout connection interrupted");
 		}
 		return null;
 	}
