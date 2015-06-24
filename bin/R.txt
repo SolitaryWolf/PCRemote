@@ -426,6 +426,7 @@ int dimen dialog_fixed_width_major 0x7f08000c
 int dimen dialog_fixed_width_minor 0x7f08000d
 int dimen disabled_alpha_material_dark 0x7f080001
 int dimen disabled_alpha_material_light 0x7f080000
+int dimen text_size 0x7f08002d
 int drawable abc_ab_share_pack_holo_dark 0x7f020000
 int drawable abc_ab_share_pack_holo_light 0x7f020001
 int drawable abc_btn_check_material 0x7f020002
@@ -495,7 +496,7 @@ int drawable shutdown 0x7f020041
 int drawable sleep 0x7f020042
 int drawable switch_off 0x7f020043
 int drawable switch_on 0x7f020044
-int drawable switch_shape 0x7f020045
+int drawable toggle_button_shape 0x7f020045
 int drawable touchpad 0x7f020046
 int id RelativeLayout1 0x7f050045
 int id SeekBar01 0x7f050085
@@ -622,12 +623,12 @@ int id showHome 0x7f050006
 int id showTitle 0x7f050008
 int id split_action_bar 0x7f050019
 int id submit_area 0x7f05003c
-int id swMouse 0x7f050083
-int id swRotate 0x7f050084
 int id tabMode 0x7f050003
 int id textView1 0x7f050086
 int id textView2 0x7f050088
 int id title 0x7f050027
+int id toggleBtnMouse 0x7f050083
+int id toggleBtnRotate 0x7f050084
 int id tvAboutContent 0x7f05006f
 int id tvAvailableDevice 0x7f050071
 int id tvHelpContent 0x7f050077

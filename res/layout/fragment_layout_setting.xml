@@ -5,17 +5,51 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <Switch
-        android:id="@+id/swMouse"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mouse buttons" />
+        android:orientation="horizontal" >
 
-    <Switch
-        android:id="@+id/swRotate"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Mouse button"
+            android:layout_gravity="left"
+            android:textStyle="bold"
+            android:layout_weight="1" />
+
+        <ToggleButton
+            android:id="@+id/toggleBtnMouse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_button_shape"
+            android:textOff=""
+            android:textOn=""
+            android:layout_gravity="right"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lock auto rotate" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Lock auto rotate"
+            android:layout_gravity="start"
+            android:textStyle="bold" />
+
+        <ToggleButton
+            android:id="@+id/toggleBtnRotate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_button_shape"
+            android:textOff=""
+            android:textOn=""
+            android:layout_gravity="end" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -52,8 +52,6 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				ObjectInputStream ois = null;
 
 				mDatagramSoc.receive(pk);
-				if (isCancelled())
-					Log.d("Socket", "Fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
 

@@ -1725,6 +1725,7 @@ containing a value of this type.
         public static final int dialog_fixed_width_minor=0x7f08000d;
         public static final int disabled_alpha_material_dark=0x7f080001;
         public static final int disabled_alpha_material_light=0x7f080000;
+        public static final int text_size=0x7f08002d;
     }
     public static final class drawable {
         public static final int abc_ab_share_pack_holo_dark=0x7f020000;
@@ -1796,7 +1797,7 @@ containing a value of this type.
         public static final int sleep=0x7f020042;
         public static final int switch_off=0x7f020043;
         public static final int switch_on=0x7f020044;
-        public static final int switch_shape=0x7f020045;
+        public static final int toggle_button_shape=0x7f020045;
         public static final int touchpad=0x7f020046;
     }
     public static final class id {
@@ -1925,12 +1926,12 @@ containing a value of this type.
         public static final int showTitle=0x7f050008;
         public static final int split_action_bar=0x7f050019;
         public static final int submit_area=0x7f05003c;
-        public static final int swMouse=0x7f050083;
-        public static final int swRotate=0x7f050084;
         public static final int tabMode=0x7f050003;
         public static final int textView1=0x7f050086;
         public static final int textView2=0x7f050088;
         public static final int title=0x7f050027;
+        public static final int toggleBtnMouse=0x7f050083;
+        public static final int toggleBtnRotate=0x7f050084;
         public static final int tvAboutContent=0x7f05006f;
         public static final int tvAvailableDevice=0x7f050071;
         public static final int tvHelpContent=0x7f050077;

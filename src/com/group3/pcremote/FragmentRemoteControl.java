@@ -56,7 +56,8 @@ public class FragmentRemoteControl extends Fragment {
 
 	private String command = "";
 
-	private static float x = 0, y = 0;
+	//coordinate on touchpad
+	private static float x = 0, y = 0; 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -230,7 +231,8 @@ public class FragmentRemoteControl extends Fragment {
 
 			}
 		});
-
+		
+		// get keycode when u press virtual keyboard
 		TextWatcher inputTextWatcher = new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
@@ -269,6 +271,8 @@ public class FragmentRemoteControl extends Fragment {
 			}
 		};
 		txtKeyPress.addTextChangedListener(inputTextWatcher);
+		
+		// make button back work
 		txtKeyPress.setOnKeyListener(new OnKeyListener() {
 
 			@Override

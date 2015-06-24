@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ public class FragmentAbout extends Fragment {
 
 	private void getFormWidgets(View rootView) {
 		tvAboutContent = (TextView) rootView.findViewById(R.id.tvAboutContent);
+		tvAboutContent.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+			    getResources().getDimension(R.dimen.text_size));
 		// make link can be clicked
 		tvAboutContent.setMovementMethod(LinkMovementMethod.getInstance());
 
