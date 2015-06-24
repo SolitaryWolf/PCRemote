@@ -9,19 +9,13 @@
         android:id="@+id/swMouse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/switch_shape"
-        android:text="Mouse buttons"
-        android:textOff=""
-        android:textOn="" />
+        android:text="Mouse buttons" />
 
     <Switch
         android:id="@+id/swRotate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/switch_shape"
-        android:text="Lock auto rotate"
-        android:textOff=""
-        android:textOn="" />
+        android:text="Lock auto rotate" />
 
     <LinearLayout
         android:layout_width="match_parent"
