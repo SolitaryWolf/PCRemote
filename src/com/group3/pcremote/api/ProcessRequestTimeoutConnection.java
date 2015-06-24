@@ -31,6 +31,7 @@ public class ProcessRequestTimeoutConnection extends
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			Log.e("Socket", "Requesting timeout connection interrupted");
+			return null;
 		}
 		return null;
 	}

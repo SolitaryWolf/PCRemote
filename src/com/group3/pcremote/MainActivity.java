@@ -61,7 +61,8 @@ public class MainActivity extends ActionBarActivity {
 
 		// prevent screen to dim
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		
+		// change color of status bar chỉ áp dụng từ bản 21 trở lên
 		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 21) {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -341,7 +342,7 @@ public class MainActivity extends ActionBarActivity {
 						isPressBackDoubleToDisconnect = false;
 					}
 				}, 2000);
-				getSupportFragmentManager().popBackStack();
+				//getSupportFragmentManager().popBackStack();s
 			} else if (f instanceof FragmentControl) {
 				// do quay về lúc chưa có fragment nào nên tắt app luôn
 				finish();

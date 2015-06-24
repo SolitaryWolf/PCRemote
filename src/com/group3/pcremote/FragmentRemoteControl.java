@@ -2,6 +2,8 @@ package com.group3.pcremote;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -21,8 +23,10 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessCheckMaintainedConnection;
+import com.group3.pcremote.api.ProcessReceiveMaintainedConnection;
+import com.group3.pcremote.api.ProcessReceiveUDPPacket;
 import com.group3.pcremote.api.ProcessSendControlCommand;
-import com.group3.pcremote.api.ProcessSendMaintainConnection;
+import com.group3.pcremote.api.ProcessSendMaintainedConnection;
 import com.group3.pcremote.constant.KeyboardConstant;
 import com.group3.pcremote.constant.MouseConstant;
 import com.group3.pcremote.constant.SocketConstant;
@@ -47,12 +51,12 @@ public class FragmentRemoteControl extends Fragment {
 
 	private ProcessSendControlCommand mProcessSendControlCommand = null;
 	private ProcessCheckMaintainedConnection mProcessCheckMaintainedConnection = null;
+	private ProcessSendMaintainedConnection mProcessSendMaintainedConnection = null;
+	private ProcessReceiveMaintainedConnection mProcessReceiveMaintainedConnection = null;
 
 	private String command = "";
 
 	private static float x = 0, y = 0;
-	
-	private Handler mHandler = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -357,36 +361,66 @@ public class FragmentRemoteControl extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		mHandler = new Handler();
-		mHandler.postDelayed(new Runnable() {
-			public void run() {
-				SenderData senderData = new SenderData();
-				senderData.setCommand(SocketConstant.MAINTAIN_CONNECTION);
-				senderData.setData(null);
-				
-				new ProcessSendMaintainConnection(FragmentRemoteControl.this,
-						senderData, FragmentControl.mDatagramSoc,
-						FragmentControl.mConnectedServerIP).execute();
-			}
-		}, 1000);
+		receiveMaintainedConnection();
 		
-		mProcessCheckMaintainedConnection = new ProcessCheckMaintainedConnection(FragmentRemoteControl.this);
-		mProcessCheckMaintainedConnection.execute();
+		SenderData senderData = new SenderData();
+		senderData.setCommand(SocketConstant.MAINTAIN_CONNECTION);
+		senderData.setData(null);
+
+		mProcessSendMaintainedConnection = new ProcessSendMaintainedConnection(
+				FragmentRemoteControl.this, senderData,
+				FragmentControl.mDatagramSoc,
+				FragmentControl.mConnectedServerIP);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			mProcessSendMaintainedConnection
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			mProcessSendMaintainedConnection.execute();
+		
+		
+		mProcessCheckMaintainedConnection = new ProcessCheckMaintainedConnection(
+				FragmentRemoteControl.this);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			mProcessCheckMaintainedConnection
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			mProcessCheckMaintainedConnection.execute();
 	}
 
 	@Override
 	public void onPause() {
-		mHandler.removeCallbacksAndMessages(null);
 		cancelCheckMaintainedConnection();
+		cancelSendMaintainedConnection();
+		cancelReceiveMaintainedConnection();
+		
 		super.onPause();
 	}
-	
+
 	public void cancelCheckMaintainedConnection() {
 		if (mProcessCheckMaintainedConnection != null
 				&& !mProcessCheckMaintainedConnection.isCancelled())
 			mProcessCheckMaintainedConnection.cancel(true);
 	}
+
+	public void cancelSendMaintainedConnection() {
+		if (mProcessSendMaintainedConnection != null
+				&& !mProcessSendMaintainedConnection.isCancelled())
+			mProcessSendMaintainedConnection.cancel(true);
+	}
 	
+	public void cancelReceiveMaintainedConnection() {
+		if (mProcessReceiveMaintainedConnection != null
+				&& !mProcessReceiveMaintainedConnection.isCancelled())
+			mProcessReceiveMaintainedConnection.cancel(true);
+	}
 	
+	public void receiveMaintainedConnection() {
+		mProcessReceiveMaintainedConnection = new ProcessReceiveMaintainedConnection(this, FragmentControl.mDatagramSoc);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			mProcessReceiveMaintainedConnection
+					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			mProcessReceiveMaintainedConnection.execute();
+	}
+
 }

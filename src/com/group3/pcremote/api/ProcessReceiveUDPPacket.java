@@ -40,33 +40,40 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		try {
-			while (!isCancelled()) {
-				if (mDatagramSoc == null)
+		while (!isCancelled()) {
+			try {
+				if (mDatagramSoc == null) {
+					Log.d("Socket", "DatagramSocket is null");
 					return null;
+				}
 				byte[] buffer = new byte[6400];
 				DatagramPacket pk = new DatagramPacket(buffer, buffer.length);
 				ByteArrayInputStream baos = null;
 				ObjectInputStream ois = null;
 
 				mDatagramSoc.receive(pk);
+				if (isCancelled())
+					Log.d("Socket", "Fuckkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
 				baos = new ByteArrayInputStream(buffer);
 				ois = new ObjectInputStream(baos);
 
 				Object receiverData = ois.readObject();
+
 				if (receiverData != null && receiverData instanceof SenderData)
 					mSenderData = (SenderData) receiverData;
 				else
 					continue;
 				Log.d("Socket", mSenderData.getCommand());
+				// Log.d("Socket", pk.getAddress().getHostAddress());
+
 				if (mSenderData.getCommand().equals(
 						SocketConstant.RESPONSE_SERVER_INFO)) {
+
 					/*
-					 * Log.d("Socket",
-					 * ((ServerInfo)mSenderData.getData()).getServerIP());
-					 * Log.d("Socket",
-					 * ((ServerInfo)mSenderData.getData()).getServerName());
+					 * Log.d("Socket", ((ServerInfo)
+					 * mSenderData.getData()).getServerIP());
 					 */
+
 					if (mSenderData.getData() instanceof ServerInfo) {
 						ServerInfo sInfo = new ServerInfo();
 						sInfo.setServerIP(pk.getAddress().getHostAddress());
@@ -74,10 +81,13 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 								.getServerName());
 						publishProgress(sInfo);
 					}
-				} else if (mSenderData.getCommand().equals(
+				}
+
+				else if (mSenderData.getCommand().equals(
 						SocketConstant.CONNECT_ACCEPT)
 						&& !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostAddress())) {
+					if (FragmentControl.mConnectedServerIP.equals(pk
+							.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = true;
 						publishProgress(SocketConstant.CONNECT_ACCEPT);
 					}
@@ -86,28 +96,21 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				else if (mSenderData.getCommand().equals(
 						SocketConstant.CONNECT_REFUSE)
 						&& !FragmentControl.mIsTimeOut) {
-					if (FragmentControl.mConnectedServerIP.equals(pk.getAddress().getHostAddress())) {
+					if (FragmentControl.mConnectedServerIP.equals(pk
+							.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = false;
 						publishProgress(SocketConstant.CONNECT_REFUSE);
 					}
 				}
-				
-				else if (mSenderData.getCommand().equals(SocketConstant.MAINTAIN_CONNECTION))
-				{
-					Log.d("Socket", "Receive maintained connection");
-					// lấy fragment hiện tại
-					Fragment f = mContext.getActivity().getSupportFragmentManager().findFragmentById(
-							R.id.content_frame);
-					if (f instanceof FragmentRemoteControl)
-						publishProgress(SocketConstant.MAINTAIN_CONNECTION);
-				}				
+			} catch (IOException e) {
+				Log.d("Socket", e.getMessage());
+			} catch (ClassNotFoundException e) {
+				Log.d("Socket", e.getMessage());
+			} catch (Exception e) {
+				Log.d("Socket", e.getMessage());
 			}
-
-		} catch (IOException e) {
-			Log.d("Socket", e.getMessage());
-		} catch (ClassNotFoundException e) {
-			Log.d("Socket", e.getMessage());
 		}
+
 		return null;
 	}
 
@@ -139,15 +142,6 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				Toast.makeText(mContext.getActivity(), "Can't connect",
 						Toast.LENGTH_SHORT).show();
 		}
-		
-		else if (command.equals(SocketConstant.MAINTAIN_CONNECTION)) {
-			Fragment f = mContext.getActivity().getSupportFragmentManager()
-					.findFragmentById(R.id.content_frame);
-			if (f instanceof FragmentRemoteControl) {
-				// bật cờ duy trì connection
-				FragmentControl.mIsMaintainedConnection = true;
-			}
-		}
-				
+
 	}
 }

@@ -20,7 +20,7 @@ import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
 import com.group3.pcremote.model.SenderData;
 
-public class ProcessSendMaintainConnection extends AsyncTask<Void, Void, Void> {
+public class ProcessSendMaintainedConnection extends AsyncTask<Void, Void, Void> {
 	private SenderData mSenderData = null;
 	private Fragment mContext;
 	// lý do phải để DatagramSocket vào hàm tạo bởi vì socket khi
@@ -29,7 +29,7 @@ public class ProcessSendMaintainConnection extends AsyncTask<Void, Void, Void> {
 	private DatagramSocket mDatagramSoc = null;
 	private String mServerIP = "";
 
-	public ProcessSendMaintainConnection(Fragment mContext, SenderData mSenderData,
+	public ProcessSendMaintainedConnection(Fragment mContext, SenderData mSenderData,
 			DatagramSocket mDatagramSocket, String mServerIP) {
 		this.mSenderData = mSenderData;
 		this.mContext = mContext;
@@ -39,7 +39,7 @@ public class ProcessSendMaintainConnection extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		if (!isCancelled()) {
+		while (!isCancelled()) {
 			try {
 
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream(
@@ -56,10 +56,12 @@ public class ProcessSendMaintainConnection extends AsyncTask<Void, Void, Void> {
 						addr, SocketConstant.PORT);
 
 				mDatagramSoc.send(packet);
-				Log.d("Socket", "Send maintain connection");
+				Log.d("SocketMaintainance", "Send maintained connection");
+				
+				Thread.sleep(1000);
 
-			} catch (IOException e) {
-				Log.e("Socket", e.getMessage());
+			} catch (IOException | InterruptedException e) {
+				Log.e("SocketMaintainance", e.getMessage());
 			}
 		}
 		return null;

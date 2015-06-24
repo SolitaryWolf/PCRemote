@@ -121,7 +121,13 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 						mIsTimeOut = false;
 						processRequestTimeoutConnection = new ProcessRequestTimeoutConnection(
 								FragmentControl.this, mProgressDialog);
-						processRequestTimeoutConnection.execute();
+						
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+							processRequestTimeoutConnection
+									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+						else
+							processRequestTimeoutConnection.execute();
+						
 						mConnectedServerIP = mALServerInfo.get(position)
 								.getServerIP().trim();
 						sendRequestConnect(mConnectedServerIP);
@@ -271,7 +277,8 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	 */
 	@Override
 	public void onAcceptConnection() {
-		cancelSendBroadcast();
+		/*cancelSendBroadcast();
+		cancelReceiveDataFromServer();*/
 		
 		Fragment fragment = new FragmentRemoteControl();
 
@@ -388,6 +395,7 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		
 		mIsConnected = false;
 		mConnectedServerIP = "";
+
 		receiveBroadcastWifiChange();
 	}
 
