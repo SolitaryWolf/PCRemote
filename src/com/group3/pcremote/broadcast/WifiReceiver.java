@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
-import com.group3.pcremote.projectinterface.WifiInfoInterface;
+import com.group3.pcremote.interfaces.WifiInfoInterface;
 
 public class WifiReceiver extends BroadcastReceiver {
 	private WifiInfoInterface mWifiInfoInterface;

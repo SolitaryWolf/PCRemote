@@ -4,6 +4,7 @@ public class MouseConstant {
 
 	public static final String MOUSE_CLICK_COMMAND = "MouseCommand";
 	public static final String MOUSE_MOVE_COMMAND = "MouseMoveCommand";
+	public static final String MOUSE_SCROLL = "MouseScroll";
 	public static final int CLICK = 0;
 	public static final int PRESS = 1;
 	public static final int RELEASE = 2;

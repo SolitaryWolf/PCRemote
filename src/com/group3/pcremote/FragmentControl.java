@@ -2,11 +2,16 @@ package com.group3.pcremote;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +24,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.group3.pcremote.adapter.HistoryAdapter;
 import com.group3.pcremote.adapter.ServerInfoAdapter;
 import com.group3.pcremote.api.ProcessReceiveUDPPacket;
@@ -28,12 +35,13 @@ import com.group3.pcremote.api.ProcessSendRequestConnection;
 import com.group3.pcremote.api.ProcessSendUDPPacket;
 import com.group3.pcremote.broadcast.WifiReceiver;
 import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.interfaces.ConnectionOKInterface;
+import com.group3.pcremote.interfaces.ServerInfoInterface;
+import com.group3.pcremote.interfaces.WifiInfoInterface;
 import com.group3.pcremote.model.ClientInfo;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
-import com.group3.pcremote.projectinterface.ConnectionOKInterface;
-import com.group3.pcremote.projectinterface.ServerInfoInterface;
-import com.group3.pcremote.projectinterface.WifiInfoInterface;
+import com.group3.pcremote.model.ServerInfoHistory;
 import com.group3.pcremote.utils.NetworkUtils;
 
 public class FragmentControl extends Fragment implements WifiInfoInterface,
@@ -45,14 +53,14 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	// list server info
 	private ListView lvAvailableDevice;
-	private ArrayList<ServerInfo> mALServerInfo;
-	private ServerInfoAdapter mServerInfoAdaper;
-	private ArrayList<ServerInfo> mALServerInfoTemp;
+	private ArrayList<ServerInfo> mALServerInfo = null;
+	private ServerInfoAdapter mServerInfoAdaper = null;
+	private ArrayList<ServerInfo> mALServerInfoTemp = null;
 
 	// list history
 	private ListView lvHistory;
-	private ArrayList<ServerInfo> mALHistory;
-	private HistoryAdapter mHistoryAdapter;
+	private ArrayList<ServerInfoHistory> mALHistory = null;
+	private HistoryAdapter mHistoryAdapter = null;
 
 	// process
 	private ProcessSendUDPPacket processSendUDPPacket = null;
@@ -71,18 +79,45 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	// progress dialog
 	private ProgressDialog mProgressDialog;
+	
+	// setting
+	public static boolean sIsMouseButtonsOn = true;
+	public static boolean sIsAutoRotateOn = true;
+	public static int sPointerSpeed = 1;
+	public static int sScrollingSpeed = 1;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_layout_control,
 				container, false);
-
+		// reset UserPreferences
+		/*getActivity().getSharedPreferences("connection_history", 0).edit().clear().commit();
+		getActivity().getSharedPreferences("setting", 0).edit().clear().commit();*/
 		getFormWidgets(rootView);
 		addEventToFormWidget(rootView);
-
+		
 		return rootView;
 	}
+	
+	
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		// chỉ cần tạo 1 lần
+		// connected device history
+		mALHistory = new ArrayList<ServerInfoHistory>();
+		mHistoryAdapter = new HistoryAdapter(this,
+				R.layout.custom_listview_serverinfohistory, mALHistory);
+		loadConnectionHistory();
+		
+		// load setting
+		loadSetting();
+	}
+
+
 
 	private void getFormWidgets(View rootView) {
 		tvNetWorkConnection = (TextView) rootView
@@ -96,6 +131,13 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		mServerInfoAdaper = new ServerInfoAdapter(this,
 				R.layout.custom_listview_serverinfo, mALServerInfo);
 		lvAvailableDevice.setAdapter(mServerInfoAdaper);
+
+		// list ServerInfoHistory
+		lvHistory = (ListView) rootView.findViewById(R.id.lvHistory);
+		/*mALHistory = new ArrayList<ServerInfoHistory>();
+		mHistoryAdapter = new HistoryAdapter(this,
+				R.layout.custom_listview_serverinfohistory, mALHistory);*/
+		lvHistory.setAdapter(mHistoryAdapter);
 
 		try {
 			mDatagramSoc = new DatagramSocket(SocketConstant.PORT);
@@ -121,13 +163,13 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 						mIsTimeOut = false;
 						processRequestTimeoutConnection = new ProcessRequestTimeoutConnection(
 								FragmentControl.this, mProgressDialog);
-						
+
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 							processRequestTimeoutConnection
 									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						else
 							processRequestTimeoutConnection.execute();
-						
+
 						mConnectedServerIP = mALServerInfo.get(position)
 								.getServerIP().trim();
 						sendRequestConnect(mConnectedServerIP);
@@ -276,16 +318,15 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 	 * () khi get tín hiệu chấp nhận kết nối
 	 */
 	@Override
-	public void onAcceptConnection() {
-		/*cancelSendBroadcast();
-		cancelReceiveDataFromServer();*/
-		
+	public void onAcceptConnection(ServerInfo serverInfo) {
+		updateServerInfoHistoryList(serverInfo);
+
 		Fragment fragment = new FragmentRemoteControl();
 
 		FragmentManager fragManager = getActivity().getSupportFragmentManager();
 		FragmentTransaction fragTransaction = fragManager.beginTransaction();
 		// để khi ấn back quay về cửa sổ trước đó
-		fragTransaction.addToBackStack(null); 
+		fragTransaction.addToBackStack(null);
 		fragTransaction.replace(R.id.content_frame, fragment).commit();
 	}
 
@@ -378,11 +419,13 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 
 	@Override
 	public void onPause() {
+		//saveConnectionHistory();
+
 		cancelRequestTimeoutConnection();
 		cancelSendRequestConnect();
 		cancelSendBroadcast();
 		cancelReceiveDataFromServer();
-		
+
 		super.onPause();
 	}
 
@@ -391,28 +434,150 @@ public class FragmentControl extends Fragment implements WifiInfoInterface,
 		super.onResume();
 
 		// change navigation drawer when press back
-		((MainActivity)getActivity()).changeNavigationDrawerItem(0);
-		
+		((MainActivity) getActivity()).changeNavigationDrawerItem(0);
+
 		mIsConnected = false;
 		mConnectedServerIP = "";
+		if (mHistoryAdapter != null && mALHistory.size() > 0)
+			mHistoryAdapter.notifyDataSetChanged();
 
 		receiveBroadcastWifiChange();
 	}
 
 	@Override
 	public void onDestroyView() {
-		
 		// hủy đăng ký
 		if (broadcastRecWifiChange != null)
 			getActivity().unregisterReceiver(broadcastRecWifiChange);
 		super.onDestroyView();
-		/*Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
-				R.id.content_frame);
-		FragmentTransaction fragTransaction = getActivity()
-				.getSupportFragmentManager().beginTransaction();
-		fragTransaction.remove(fragment);
-		fragTransaction.commit();*/
-			
+		/*
+		 * Fragment fragment = (Fragment) getFragmentManager().findFragmentById(
+		 * R.id.content_frame); FragmentTransaction fragTransaction =
+		 * getActivity() .getSupportFragmentManager().beginTransaction();
+		 * fragTransaction.remove(fragment); fragTransaction.commit();
+		 */
+
+	}	
+
+	@Override
+	public void onDestroy() {
+		saveConnectionHistory();
+		super.onDestroy();
+	}
+
+
+	/*
+	 * load list connection history using UserPreferences
+	 */
+	private void loadConnectionHistory() {
+		// method trả về SharedPreferences với đối số 1 là tên của file trạng
+		// thái cần đọc
+		SharedPreferences sPre = getActivity().getSharedPreferences("connection_history",
+				getActivity().MODE_PRIVATE);
+
+		// lấy tối đa 5 giá trị đã lưu
+		Map<String, String> map = new HashMap<String, String>();
+
+		Gson gson = new Gson();
+		String jsonString = "";
+
+		for (int i = 1; i <= 5; i++) {
+			// ServerInfoHistory i
+			jsonString = sPre.getString("device" + i, "");
+			if (!jsonString.equals(""))
+			{
+				ServerInfoHistory serverInfoHis = null;
+				serverInfoHis = gson.fromJson(jsonString, ServerInfoHistory.class);
+				if (serverInfoHis != null)
+				{
+					mALHistory.add(serverInfoHis);
+				}
+			}	
+		}
+	}
+
+	// save list connection history using UserPreferences
+	private void saveConnectionHistory() {
+		// method trả về SharedPreferences với đối số 1 là tên của file trạng
+		// thái cần lưu(ko cần thêm đuôi vì
+		// mặc định đuôi là .xml), đối số 2 là chế độ lưu
+		SharedPreferences sPre = getActivity().getSharedPreferences(
+				"connection_history", getActivity().MODE_PRIVATE);
+		// tạo đối tượng Editor cho phép ta chỉnh sửa dữ liệu cần lưu
+		SharedPreferences.Editor editor = sPre.edit();
+
+		// lấy 5 phần tử cuối trong listview history
+		Map<String, String> map = new HashMap<String, String>();
+
+		Gson gson = new Gson();
+		String json = "";
+		if (mALHistory.size() >= 5) {
+			for (int i = 1; i <= 5; i++) {
+				// ServerInfoHistory i
+				json = gson.toJson(mALHistory.get(mALHistory.size() - (6 - i)));
+				map.put("device" + i, json);
+			}
+		} else {
+			for (int i = 0; i < mALHistory.size(); i++) {
+				// ServerInfoHistory i
+				json = gson.toJson(mALHistory.get(i));
+				map.put("device" + (i + 1), json);
+			}
+		}
+
+		// đưa dữ liệu vào SharedPreferences thông qua Editor
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			editor.putString(entry.getKey(), entry.getValue());
+		}
+
+		// lưu trạng thái bằng cách gọi method commit()
+		editor.commit();
+
+	}
+
+	public void updateServerInfoHistoryList(ServerInfo serverInfo) {
+		if (serverInfo == null)
+			return;
+		ServerInfoHistory serverInfoHis = new ServerInfoHistory();
+		serverInfoHis.setConnectedDate(currentDate());
+		serverInfoHis.setServerIP(serverInfo.getServerIP());
+		serverInfoHis.setServerName(serverInfo.getServerName());
+
+		if (mALHistory.size() > 0) {
+			for (ServerInfoHistory s : mALHistory)
+				if (serverInfoHis.getServerIP().trim().equals(s.getServerIP().trim())
+						&& serverInfoHis.getServerName().trim().equals(
+								s.getServerName().trim())
+						&& serverInfoHis.getConnectedDate().trim().equals(
+								s.getConnectedDate().trim()))
+					return;
+		}
+
+		mALHistory.add(serverInfoHis);
+		mHistoryAdapter.notifyDataSetChanged();
 	}
 	
+	private void loadSetting() {
+		// method trả về SharedPreferences với đối số 1 là tên của file trạng
+		// thái cần đọc
+		SharedPreferences sPre = getActivity().getSharedPreferences("setting",
+				getActivity().MODE_PRIVATE);
+
+		sIsMouseButtonsOn = sPre.getBoolean("isMouseButtonOn", true);
+		sIsAutoRotateOn = sPre.getBoolean("isAutoRotateOn", true);
+		sPointerSpeed = sPre.getInt("pointerSpeed", 1);
+		sScrollingSpeed = sPre.getInt("scrollingSpeed", 1);
+	}
+
+	/*
+	 * get current date
+	 */
+	private static String currentDate() {
+		Date date = new Date();
+		String strDateFormat = "dd/MM/yyyy";
+
+		SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+
+		return sdf.format(date);
+	}
 }

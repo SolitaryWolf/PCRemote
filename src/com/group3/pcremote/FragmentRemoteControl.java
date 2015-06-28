@@ -1,14 +1,16 @@
 package com.group3.pcremote;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,7 +26,6 @@ import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessCheckMaintainedConnection;
 import com.group3.pcremote.api.ProcessReceiveMaintainedConnection;
-import com.group3.pcremote.api.ProcessReceiveUDPPacket;
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.api.ProcessSendMaintainedConnection;
 import com.group3.pcremote.constant.KeyboardConstant;
@@ -34,6 +35,7 @@ import com.group3.pcremote.model.Coordinates;
 import com.group3.pcremote.model.KeyboardCommand;
 import com.group3.pcremote.model.KeyboardEditText;
 import com.group3.pcremote.model.MouseClick;
+import com.group3.pcremote.model.MouseScroll;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.utils.KeyboardUtils;
 
@@ -56,8 +58,17 @@ public class FragmentRemoteControl extends Fragment {
 
 	private String command = "";
 
-	//coordinate on touchpad
-	private static float x = 0, y = 0; 
+	// coordinate on touchpad
+	private static float x = 0, y = 0;
+	private static float yScroll = 0;
+	private static final int MAX_CLICK_DURATION = 150;
+	private long mClickTime = -1;
+	private long mClickTime2 = -1;
+	private long mClickTime3 = -1;
+	// finger number 1
+	private boolean FLAG_ON_POINTER1_DOWN = false;
+	// finger number 2
+	private boolean FLAG_ON_POINTER2_DOWN = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +86,14 @@ public class FragmentRemoteControl extends Fragment {
 		btnLeftMouse = (Button) rootView.findViewById(R.id.btnLeftMouse);
 		btnRightMouse = (Button) rootView.findViewById(R.id.btnRightMouse);
 		btnMiddleMouse = (Button) rootView.findViewById(R.id.btnMiddleMouse);
+		
+		if (FragmentControl.sIsMouseButtonsOn == false)
+		{
+			btnLeftMouse.setVisibility(View.GONE);
+			btnRightMouse.setVisibility(View.GONE);
+			btnMiddleMouse.setVisibility(View.GONE);
+		}
+		
 		btnShowVirtualKeyboard = (Button) rootView
 				.findViewById(R.id.btnShowVirtualKeyboard);
 		btnShowAdditionalKeyboard = (Button) rootView
@@ -231,7 +250,7 @@ public class FragmentRemoteControl extends Fragment {
 
 			}
 		});
-		
+
 		// get keycode when u press virtual keyboard
 		TextWatcher inputTextWatcher = new TextWatcher() {
 			@Override
@@ -271,7 +290,7 @@ public class FragmentRemoteControl extends Fragment {
 			}
 		};
 		txtKeyPress.addTextChangedListener(inputTextWatcher);
-		
+
 		// make button back work
 		txtKeyPress.setOnKeyListener(new OnKeyListener() {
 
@@ -311,35 +330,148 @@ public class FragmentRemoteControl extends Fragment {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				int action = event.getAction() & MotionEvent.ACTION_MASK;
 
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					x = event.getX();
-					y = event.getY();
-				}
+				switch (action) {
+				case MotionEvent.ACTION_DOWN:
+					if (event.getPointerCount() == 1) {
+						mClickTime = System.currentTimeMillis();
+						x = event.getX();
+						y = event.getY();
+					}
+					break;
 
-				/*
-				 * if (event.getAction() == MotionEvent.ACTION_UP) { x =
-				 * event.getX(); y = event.getY(); }
-				 */
+				case MotionEvent.ACTION_POINTER_DOWN:
+					if (event.getPointerCount() == 2) {
+						FLAG_ON_POINTER1_DOWN = true;
+						mClickTime2 = System.currentTimeMillis();
+						yScroll = event.getY();
+					} else if (event.getPointerCount() == 3) {
+						FLAG_ON_POINTER2_DOWN = true;
+						mClickTime3 = System.currentTimeMillis();
+					}
+					break;
 
-				if (event.getAction() == MotionEvent.ACTION_MOVE) {
-					command = MouseConstant.MOUSE_MOVE_COMMAND;
-					Coordinates coo = new Coordinates();
-					coo.setX((int) (event.getX() - x));
-					coo.setY((int) (event.getY() - y));
+				case MotionEvent.ACTION_MOVE: // a pointer was moved
+					if (event.getPointerCount() == 2) {
+						command = MouseConstant.MOUSE_SCROLL;
+						MouseScroll mouseScroll = new MouseScroll((int) ((event
+								.getY() - yScroll) * FragmentControl.sScrollingSpeed));
 
-					SenderData senderData = new SenderData();
-					senderData.setCommand(command);
-					senderData.setData(coo);
+						SenderData senderData = new SenderData();
+						senderData.setCommand(command);
+						senderData.setData(mouseScroll);
 
-					mProcessSendControlCommand = new ProcessSendControlCommand(
-							FragmentRemoteControl.this, senderData,
-							FragmentControl.mDatagramSoc,
-							FragmentControl.mConnectedServerIP);
-					mProcessSendControlCommand.execute();
+						mProcessSendControlCommand = new ProcessSendControlCommand(
+								FragmentRemoteControl.this, senderData,
+								FragmentControl.mDatagramSoc,
+								FragmentControl.mConnectedServerIP);
+						mProcessSendControlCommand.execute();
 
-					x = event.getX();
-					y = event.getY();
+						yScroll = event.getY();
+					} else if (event.getPointerCount() == 1) {
+						command = MouseConstant.MOUSE_MOVE_COMMAND;
+						Coordinates coo = new Coordinates();
+						coo.setX((int) ((event.getX() - x)) * FragmentControl.sPointerSpeed);
+						coo.setY((int) ((event.getY() - y)) * FragmentControl.sPointerSpeed);
+
+						SenderData senderData = new SenderData();
+						senderData.setCommand(command);
+						senderData.setData(coo);
+
+						mProcessSendControlCommand = new ProcessSendControlCommand(
+								FragmentRemoteControl.this, senderData,
+								FragmentControl.mDatagramSoc,
+								FragmentControl.mConnectedServerIP);
+						mProcessSendControlCommand.execute();
+
+						x = event.getX();
+						y = event.getY();
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+					if (event.getPointerCount() == 1) {
+						// nếu đang giữ ngón 2 thì ko xét
+						if (FLAG_ON_POINTER1_DOWN) {
+							// release pointer1
+							FLAG_ON_POINTER1_DOWN = false;
+							break;
+						}
+
+						mClickTime = System.currentTimeMillis() - mClickTime;
+						if (mClickTime <= MAX_CLICK_DURATION) {
+							command = MouseConstant.MOUSE_CLICK_COMMAND;
+
+							MouseClick mouseClick = new MouseClick();
+							mouseClick.setButtonIndex(MouseConstant.LEFT_MOUSE);
+							mouseClick.setPress(MouseConstant.CLICK);
+
+							SenderData senderData = new SenderData();
+							senderData.setCommand(command);
+							senderData.setData(mouseClick);
+
+							mProcessSendControlCommand = new ProcessSendControlCommand(
+									FragmentRemoteControl.this, senderData,
+									FragmentControl.mDatagramSoc,
+									FragmentControl.mConnectedServerIP);
+							mProcessSendControlCommand.execute();
+						}
+					}
+					break;
+
+				case MotionEvent.ACTION_POINTER_UP:
+					if (event.getPointerCount() == 2) {
+						// nếu đang giữ ngón 3 thì ko xét
+						if (FLAG_ON_POINTER2_DOWN) {
+							FLAG_ON_POINTER2_DOWN = false;
+							break;
+						}
+
+						mClickTime2 = System.currentTimeMillis() - mClickTime2;
+						if (mClickTime2 <= MAX_CLICK_DURATION) {
+							command = MouseConstant.MOUSE_CLICK_COMMAND;
+
+							MouseClick mouseClick = new MouseClick();
+							mouseClick
+									.setButtonIndex(MouseConstant.RIGHT_MOUSE);
+							mouseClick.setPress(MouseConstant.CLICK);
+
+							SenderData senderData = new SenderData();
+							senderData.setCommand(command);
+							senderData.setData(mouseClick);
+
+							mProcessSendControlCommand = new ProcessSendControlCommand(
+									FragmentRemoteControl.this, senderData,
+									FragmentControl.mDatagramSoc,
+									FragmentControl.mConnectedServerIP);
+							mProcessSendControlCommand.execute();
+						}
+					} else if (event.getPointerCount() == 3) {
+						mClickTime3 = System.currentTimeMillis() - mClickTime3;
+						if (mClickTime3 <= MAX_CLICK_DURATION) {
+							command = MouseConstant.MOUSE_CLICK_COMMAND;
+
+							MouseClick mouseClick = new MouseClick();
+							mouseClick
+									.setButtonIndex(MouseConstant.MIDDLE_MOUSE);
+							mouseClick.setPress(MouseConstant.CLICK);
+
+							SenderData senderData = new SenderData();
+							senderData.setCommand(command);
+							senderData.setData(mouseClick);
+
+							mProcessSendControlCommand = new ProcessSendControlCommand(
+									FragmentRemoteControl.this, senderData,
+									FragmentControl.mDatagramSoc,
+									FragmentControl.mConnectedServerIP);
+							mProcessSendControlCommand.execute();
+						}
+					}
+					break;
+				case MotionEvent.ACTION_CANCEL:
+					break;
+				default:
+					break;
 				}
 
 				return true;
@@ -356,17 +488,24 @@ public class FragmentRemoteControl extends Fragment {
 	}
 
 	// For close keyboard
-	public void closeVirtualKeyboard(Context mContext) {
+	public void closeVirtualKeyboard() {
 		InputMethodManager imm = (InputMethodManager) getActivity()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+		imm.hideSoftInputFromWindow(txtKeyPress.getWindowToken(), 0);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		// hide ActionBar when display FragmentRemoteControl
+		ActionBar actionBar = ((ActionBarActivity) getActivity())
+				.getSupportActionBar();
+		actionBar.hide();
+		((MainActivity) getActivity()).disableSlidingNavigationDrawer();
+
 		receiveMaintainedConnection();
-		
+
 		SenderData senderData = new SenderData();
 		senderData.setCommand(SocketConstant.MAINTAIN_CONNECTION);
 		senderData.setData(null);
@@ -380,8 +519,7 @@ public class FragmentRemoteControl extends Fragment {
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			mProcessSendMaintainedConnection.execute();
-		
-		
+
 		mProcessCheckMaintainedConnection = new ProcessCheckMaintainedConnection(
 				FragmentRemoteControl.this);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -396,7 +534,13 @@ public class FragmentRemoteControl extends Fragment {
 		cancelCheckMaintainedConnection();
 		cancelSendMaintainedConnection();
 		cancelReceiveMaintainedConnection();
-		
+
+		closeVirtualKeyboard();
+
+		// show ActionBar when close FragmentRemoteControl
+		((ActionBarActivity) getActivity()).getSupportActionBar().show();
+		((MainActivity) getActivity()).enableSlidingNavigationDrawer();
+
 		super.onPause();
 	}
 
@@ -411,15 +555,16 @@ public class FragmentRemoteControl extends Fragment {
 				&& !mProcessSendMaintainedConnection.isCancelled())
 			mProcessSendMaintainedConnection.cancel(true);
 	}
-	
+
 	public void cancelReceiveMaintainedConnection() {
 		if (mProcessReceiveMaintainedConnection != null
 				&& !mProcessReceiveMaintainedConnection.isCancelled())
 			mProcessReceiveMaintainedConnection.cancel(true);
 	}
-	
+
 	public void receiveMaintainedConnection() {
-		mProcessReceiveMaintainedConnection = new ProcessReceiveMaintainedConnection(this, FragmentControl.mDatagramSoc);
+		mProcessReceiveMaintainedConnection = new ProcessReceiveMaintainedConnection(
+				this, FragmentControl.mDatagramSoc);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			mProcessReceiveMaintainedConnection
 					.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

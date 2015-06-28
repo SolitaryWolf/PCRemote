@@ -3,6 +3,7 @@ package com.group3.pcremote;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,8 @@ public class FragmentHelp extends Fragment {
 
 	private void getFormWidgets(View rootView) {
 		tvHelpContent = (TextView) rootView.findViewById(R.id.tvHelpContent);
-
+		tvHelpContent.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+			    getResources().getDimension(R.dimen.text_size));
 		tvHelpContent
 				.setText(Html
 						.fromHtml("1. Open app on your Android device.<br/>"

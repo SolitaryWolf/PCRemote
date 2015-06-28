@@ -1,4 +1,4 @@
-package com.group3.pcremote.projectinterface;
+package com.group3.pcremote.interfaces;
 
 import com.group3.pcremote.model.ServerInfo;
 

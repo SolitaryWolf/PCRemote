@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.group3.pcremote.adapter.CustomDrawerAdapter;
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.constant.SocketConstant;
@@ -61,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
 
 		// prevent screen to dim
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
+
 		// change color of status bar chỉ áp dụng từ bản 21 trở lên
 		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 21) {
 			Window window = getWindow();
@@ -342,12 +344,20 @@ public class MainActivity extends ActionBarActivity {
 						isPressBackDoubleToDisconnect = false;
 					}
 				}, 2000);
-				//getSupportFragmentManager().popBackStack();s
+				// getSupportFragmentManager().popBackStack();s
 			} else if (f instanceof FragmentControl) {
 				// do quay về lúc chưa có fragment nào nên tắt app luôn
 				finish();
 			} else
 				super.onBackPressed();
 		}
+	}
+
+	public void disableSlidingNavigationDrawer() {
+		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+	}
+
+	public void enableSlidingNavigationDrawer() {
+		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 	}
 }

@@ -15,10 +15,10 @@ import com.group3.pcremote.FragmentControl;
 import com.group3.pcremote.FragmentRemoteControl;
 import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.interfaces.ConnectionOKInterface;
+import com.group3.pcremote.interfaces.ServerInfoInterface;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
-import com.group3.pcremote.projectinterface.ConnectionOKInterface;
-import com.group3.pcremote.projectinterface.ServerInfoInterface;
 
 public class ProcessReceiveMaintainedConnection extends
 		AsyncTask<Void, Object, Void> {

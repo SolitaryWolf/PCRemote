@@ -15,14 +15,12 @@ import com.group3.pcremote.FragmentControl;
 import com.group3.pcremote.FragmentRemoteControl;
 import com.group3.pcremote.R;
 import com.group3.pcremote.constant.SocketConstant;
+import com.group3.pcremote.interfaces.ConnectionOKInterface;
+import com.group3.pcremote.interfaces.ServerInfoInterface;
 import com.group3.pcremote.model.SenderData;
 import com.group3.pcremote.model.ServerInfo;
-import com.group3.pcremote.projectinterface.ConnectionOKInterface;
-import com.group3.pcremote.projectinterface.ServerInfoInterface;
 
 public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
-
-	private SenderData mSenderData = null;
 	private Fragment mContext = null;
 	private ServerInfoInterface mServerInfoInterface = null;
 	private ConnectionOKInterface mConnectionOKInterface = null;
@@ -40,6 +38,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
+		SenderData mSenderData = null;
 		while (!isCancelled()) {
 			try {
 				if (mDatagramSoc == null) {
@@ -77,7 +76,8 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 						sInfo.setServerIP(pk.getAddress().getHostAddress());
 						sInfo.setServerName(((ServerInfo) mSenderData.getData())
 								.getServerName());
-						publishProgress(sInfo);
+						mSenderData.setData(sInfo);
+						publishProgress(mSenderData);
 					}
 				}
 
@@ -87,7 +87,13 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 					if (FragmentControl.mConnectedServerIP.equals(pk
 							.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = true;
-						publishProgress(SocketConstant.CONNECT_ACCEPT);
+						ServerInfo sInfo = new ServerInfo();
+						sInfo.setServerIP(pk.getAddress().getHostAddress());
+						sInfo.setServerName(((ServerInfo) mSenderData.getData())
+								.getServerName());
+						
+						mSenderData.setData(sInfo);
+						publishProgress(mSenderData);
 					}
 				}
 
@@ -97,7 +103,7 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 					if (FragmentControl.mConnectedServerIP.equals(pk
 							.getAddress().getHostAddress())) {
 						FragmentControl.mIsConnected = false;
-						publishProgress(SocketConstant.CONNECT_REFUSE);
+						publishProgress(mSenderData);
 					}
 				}
 			} catch (IOException e) {
@@ -114,13 +120,20 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 
 	@Override
 	protected void onProgressUpdate(Object... values) {
-
-		String command = mSenderData.getCommand();
+		SenderData senderData = null;
+		String command = "";
+		if (values[0] != null && values[0] instanceof SenderData)
+		{
+			senderData = (SenderData) values[0];
+			if (!senderData.getCommand().equals(""))
+				command = senderData.getCommand();
+		}
+		
 		if (command.equals(SocketConstant.RESPONSE_SERVER_INFO)) {
 			Log.d("Socket", "Update UI is called");
-			if (values[0] != null && values[0] instanceof ServerInfo)
+			if (senderData.getData() != null && senderData.getData() instanceof ServerInfo)
 				mServerInfoInterface
-						.onGetServerInfoDone((ServerInfo) values[0]);
+						.onGetServerInfoDone((ServerInfo) senderData.getData());
 		} else if (command.equals(SocketConstant.CONNECT_ACCEPT)
 				|| command.equals(SocketConstant.CONNECT_REFUSE)) {
 			Log.d("Socket", "Receive connection signal");
@@ -132,11 +145,16 @@ public class ProcessReceiveUDPPacket extends AsyncTask<Void, Object, Void> {
 				((FragmentControl) f).cancelRequestTimeoutConnection();
 			}
 
-			if (values[0].equals(SocketConstant.CONNECT_ACCEPT)) {
+			if (command.equals(SocketConstant.CONNECT_ACCEPT)) {
 				Toast.makeText(mContext.getActivity(), "Connected",
 						Toast.LENGTH_SHORT).show();
-				mConnectionOKInterface.onAcceptConnection();
-			} else if (values[0].equals(SocketConstant.CONNECT_REFUSE))
+				ServerInfo serverInfo = null;
+				if (senderData.getData() != null
+						&& senderData.getData() instanceof ServerInfo) {
+					serverInfo = (ServerInfo) senderData.getData();
+				}
+				mConnectionOKInterface.onAcceptConnection(serverInfo);
+			} else if (command.equals(SocketConstant.CONNECT_REFUSE))
 				Toast.makeText(mContext.getActivity(), "Can't connect",
 						Toast.LENGTH_SHORT).show();
 		}

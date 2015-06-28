@@ -1,6 +1,5 @@
 package com.group3.pcremote.model;
 
-
 public class ServerInfoHistory {
 	private String serverIP;
 	private String serverName;
@@ -29,7 +28,4 @@ public class ServerInfoHistory {
 	public void setConnectedDate(String connectedDate) {
 		this.connectedDate = connectedDate;
 	}
-	
-	
-
 }
