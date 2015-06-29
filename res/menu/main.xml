@@ -3,9 +3,9 @@
     tools:context="com.group3.pcremote.MainActivity" >
 
     <item
-        android:id="@+id/action_refresh"
-        android:icon="@drawable/ic_refresh"
+        android:id="@+id/action_powerpoint"
+        android:icon="@drawable/ic_powerpoint"
         android:showAsAction="ifRoom"
-        android:title="refresh"/>
+        android:title="powerpoint"/>
 
 </menu>

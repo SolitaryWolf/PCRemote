@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.group3.pcremote.adapter.CustomDrawerAdapter;
 import com.group3.pcremote.api.ProcessSendControlCommand;
 import com.group3.pcremote.constant.SocketConstant;
@@ -51,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 	private CharSequence mTitle;
 
 	// điều khiển menu trên action bar
-	public static boolean mIsHiddenMenu = false; // mới vô hiện option menu
+	public static boolean mIsHiddenMenu = true; // mới vô ẩn option menu
 
 	private boolean isPressBackDoubleToDisconnect = false;
 
@@ -106,7 +105,6 @@ public class MainActivity extends ActionBarActivity {
 				R.layout.custom_drawer_item, mLDrawerItem);
 
 		lvDrawer.setAdapter(mDrawerAdapter);
-
 	}
 
 	private void addEventToFormWidgets() {
@@ -250,6 +248,8 @@ public class MainActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		MenuItem item = menu.findItem(R.id.action_powerpoint);
+		item.setIcon(getResources().getDrawable(R.drawable.ic_powerpoint));
 
 		if (mIsHiddenMenu == true) {
 			for (int i = 0; i < menu.size(); i++)
@@ -268,11 +268,11 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_refresh) {
+		if (id == R.id.action_powerpoint) {
 			Fragment f = getSupportFragmentManager().findFragmentById(
 					R.id.content_frame); // lấy fragment hiện tại
-			if (f instanceof FragmentControl) {
-				((FragmentControl) f).sendBroadcast();
+			if (f instanceof FragmentRemoteControl) {
+				((FragmentRemoteControl) f).changeMode();
 
 			}
 			return true;
@@ -359,5 +359,32 @@ public class MainActivity extends ActionBarActivity {
 
 	public void enableSlidingNavigationDrawer() {
 		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+	}
+	
+	// handle press button volume up/down on powerpoint mode
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		int action = event.getAction();
+		int keyCode = event.getKeyCode();
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			if (action == KeyEvent.ACTION_DOWN) {
+				Fragment f = getSupportFragmentManager().findFragmentById(
+						R.id.content_frame); // lấy fragment hiện tại
+				if (f instanceof FragmentRemoteControl)
+					((FragmentRemoteControl) f).sendPressLeft();
+			}
+			return true;
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+			if (action == KeyEvent.ACTION_DOWN) {
+				Fragment f = getSupportFragmentManager().findFragmentById(
+						R.id.content_frame); // lấy fragment hiện tại
+				if (f instanceof FragmentRemoteControl)
+					((FragmentRemoteControl) f).sendPressRight();
+			}
+			return true;
+		default:
+			return super.dispatchKeyEvent(event);
+		}
 	}
 }

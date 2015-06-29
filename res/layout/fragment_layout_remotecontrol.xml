@@ -2,90 +2,174 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/touchpad" >
+    android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/relativeLayoutTouchpad"
+    <LinearLayout
+        android:id="@+id/linearLayoutEssentialMode"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="match_parent"
+        android:background="@drawable/touchpad"
+        android:orientation="vertical" >
 
-<!-- android:inputType="textNoSuggestions" is used because "This happens because in cases where the user types a space, 
-certain devices will capitalize the previous word (if it is the first word and inputType="name"). 
-Therefore, afterTextChanged gets called twice. Once for the space, and once for the capitalization" -->
+        <RelativeLayout
+            android:id="@+id/relativeLayoutTouchpad"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
 
-        <com.group3.pcremote.model.KeyboardEditText
-            android:id="@+id/txtKeyPress"
+            android:inputType="textNoSuggestions" is used because "This happens because in cases 
+            where the user types a space, certain devices will capitalize the previous word 
+            (if it is the first word and inputType="name").Therefore, afterTextChanged gets called twice. 
+            Once for the space, and once for the capitalization"
+
+            <com.group3.pcremote.model.KeyboardEditText
+                android:id="@+id/txtKeyPress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textNoSuggestions|textPassword|textVisiblePassword"
+                android:textColor="@color/White"
+                android:textCursorDrawable="@null" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutMouseButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions|textPassword|textVisiblePassword"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnLeftMouse"
+                style="@style/button_virtual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnMiddleMouse"
+                style="@style/button_virtual"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnRightMouse"
+                style="@style/button_virtual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutBottomMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnShowVirtualKeyboard"
+                style="@style/button_virtual"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Virtual Keyboard" />
+
+            <Button
+                android:id="@+id/btnShowAdditionalKeyboard"
+                style="@style/button_virtual"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Additional keyboard" />
+
+            <Button
+                android:id="@+id/btnShowSystemControl"
+                style="@style/button_virtual"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="System" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frameLayoutBottomMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutPowerpointMode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/MainColor"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Chronometer"
             android:textColor="@color/White"
-            android:textCursorDrawable="@null" />
-    </RelativeLayout>
+            android:textSize="@dimen/abc_text_size_display_3_material" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMouseButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/btnLeftMouse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/button_virtual" />
+            <Button
+                android:id="@+id/btnTimer"
+                style="@style/button_virtual"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:text="Start timer" />
 
-        <Button
-            android:id="@+id/btnMiddleMouse"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            style="@style/button_virtual" />
+            <Button
+                android:id="@+id/btnStartSlideshow"
+                style="@style/button_virtual"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:text="Start Slideshow" />
 
-        <Button
-            android:id="@+id/btnRightMouse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/button_virtual" />
+            <Button
+                android:id="@+id/btnStopSlideshow"
+                style="@style/button_virtual"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:text="Stop Slideshow" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" >
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/back" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/next" />
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayoutBottomMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/btnShowVirtualKeyboard"
-            style="@style/button_virtual"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Virtual Keyboard" />
-
-        <Button
-            android:id="@+id/btnShowAdditionalKeyboard"
-            style="@style/button_virtual"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Additional keyboard" />
-
-        <Button
-            android:id="@+id/btnShowSystemControl"
-            style="@style/button_virtual"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="System" />
-
-    </LinearLayout>
-    
-    <FrameLayout
-        android:id="@+id/frameLayoutBottomMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -1,15 +1,14 @@
 package com.group3.pcremote;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +21,9 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.group3.pcremote.api.ProcessCheckMaintainedConnection;
@@ -51,6 +53,9 @@ public class FragmentRemoteControl extends Fragment {
 	private KeyboardEditText txtKeyPress;
 	private RelativeLayout relativeLayoutTouchpad;
 
+	private LinearLayout linearLayoutEssentialMode;
+	private LinearLayout linearLayoutPowerpointMode;
+
 	private ProcessSendControlCommand mProcessSendControlCommand = null;
 	private ProcessCheckMaintainedConnection mProcessCheckMaintainedConnection = null;
 	private ProcessSendMaintainedConnection mProcessSendMaintainedConnection = null;
@@ -70,6 +75,14 @@ public class FragmentRemoteControl extends Fragment {
 	// finger number 2
 	private boolean FLAG_ON_POINTER2_DOWN = false;
 
+	// powerpoint mode
+	private Button btnTimer;
+	private Button btnStartSlideshow;
+	private Button btnStopSlideshow;
+	private ImageButton btnBack;
+	private ImageButton btnNext;
+	private Chronometer chronometer;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -83,17 +96,19 @@ public class FragmentRemoteControl extends Fragment {
 	}
 
 	private void getFormWidgets(View rootView) {
+		// essential mode
+		linearLayoutEssentialMode = (LinearLayout) rootView
+				.findViewById(R.id.linearLayoutEssentialMode);
 		btnLeftMouse = (Button) rootView.findViewById(R.id.btnLeftMouse);
 		btnRightMouse = (Button) rootView.findViewById(R.id.btnRightMouse);
 		btnMiddleMouse = (Button) rootView.findViewById(R.id.btnMiddleMouse);
-		
-		if (FragmentControl.sIsMouseButtonsOn == false)
-		{
+
+		if (FragmentControl.sIsMouseButtonsOn == false) {
 			btnLeftMouse.setVisibility(View.GONE);
 			btnRightMouse.setVisibility(View.GONE);
 			btnMiddleMouse.setVisibility(View.GONE);
 		}
-		
+
 		btnShowVirtualKeyboard = (Button) rootView
 				.findViewById(R.id.btnShowVirtualKeyboard);
 		btnShowAdditionalKeyboard = (Button) rootView
@@ -106,10 +121,22 @@ public class FragmentRemoteControl extends Fragment {
 		txtKeyPress.setBackgroundColor(Color.TRANSPARENT);
 		relativeLayoutTouchpad = (RelativeLayout) rootView
 				.findViewById(R.id.relativeLayoutTouchpad);
+
+		// powerpoint mode
+		linearLayoutPowerpointMode = (LinearLayout) rootView
+				.findViewById(R.id.linearLayoutPowerpointMode);
+		btnStartSlideshow = (Button) rootView
+				.findViewById(R.id.btnStartSlideshow);
+		btnTimer = (Button) rootView.findViewById(R.id.btnTimer);
+		btnStopSlideshow = (Button) rootView
+				.findViewById(R.id.btnStopSlideshow);
+		btnBack = (ImageButton) rootView.findViewById(R.id.btnBack);
+		btnNext = (ImageButton) rootView.findViewById(R.id.btnNext);
+		chronometer = (Chronometer) rootView.findViewById(R.id.chronometer);
 	}
 
 	private void addEventToFormWidget(View rootView) {
-
+		// essential mode
 		btnLeftMouse.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -355,8 +382,8 @@ public class FragmentRemoteControl extends Fragment {
 				case MotionEvent.ACTION_MOVE: // a pointer was moved
 					if (event.getPointerCount() == 2) {
 						command = MouseConstant.MOUSE_SCROLL;
-						MouseScroll mouseScroll = new MouseScroll((int) ((event
-								.getY() - yScroll) * FragmentControl.sScrollingSpeed));
+						MouseScroll mouseScroll = new MouseScroll(
+								(int) ((event.getY() - yScroll) * FragmentControl.sScrollingSpeed));
 
 						SenderData senderData = new SenderData();
 						senderData.setCommand(command);
@@ -372,8 +399,10 @@ public class FragmentRemoteControl extends Fragment {
 					} else if (event.getPointerCount() == 1) {
 						command = MouseConstant.MOUSE_MOVE_COMMAND;
 						Coordinates coo = new Coordinates();
-						coo.setX((int) ((event.getX() - x)) * FragmentControl.sPointerSpeed);
-						coo.setY((int) ((event.getY() - y)) * FragmentControl.sPointerSpeed);
+						coo.setX((int) ((event.getX() - x))
+								* FragmentControl.sPointerSpeed);
+						coo.setY((int) ((event.getY() - y))
+								* FragmentControl.sPointerSpeed);
 
 						SenderData senderData = new SenderData();
 						senderData.setCommand(command);
@@ -478,6 +507,90 @@ public class FragmentRemoteControl extends Fragment {
 
 			}
 		});
+
+		// powerpoint mode
+		btnBack.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				sendPressLeft();
+			}
+		});
+
+		btnNext.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				sendPressRight();
+			}
+		});
+
+		btnStartSlideshow.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				command = KeyboardConstant.KEYBOARD_COMMAND;
+				KeyboardCommand keyboardCommand = new KeyboardCommand();
+				keyboardCommand.setKeyboardCode(KeyboardConstant.VK_SHIFT);
+				keyboardCommand.setPress(KeyboardConstant.PRESS);
+
+				SenderData senderData = new SenderData();
+				senderData.setCommand(command);
+				senderData.setData(keyboardCommand);
+
+				mProcessSendControlCommand = new ProcessSendControlCommand(
+						FragmentRemoteControl.this, senderData,
+						FragmentControl.mDatagramSoc,
+						FragmentControl.mConnectedServerIP);
+				mProcessSendControlCommand.execute();
+
+				keyboardCommand.setKeyboardCode(KeyboardConstant.VK_F5);
+				senderData.setCommand(command);
+				senderData.setData(keyboardCommand);
+				mProcessSendControlCommand = new ProcessSendControlCommand(
+						FragmentRemoteControl.this, senderData,
+						FragmentControl.mDatagramSoc,
+						FragmentControl.mConnectedServerIP);
+				mProcessSendControlCommand.execute();
+			}
+		});
+
+		btnStopSlideshow.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				command = KeyboardConstant.KEYBOARD_COMMAND;
+				KeyboardCommand keyboardCommand = new KeyboardCommand();
+				keyboardCommand.setKeyboardCode(KeyboardConstant.VK_ESCAPE);
+				keyboardCommand.setPress(KeyboardConstant.PRESS);
+
+				SenderData senderData = new SenderData();
+				senderData.setCommand(command);
+				senderData.setData(keyboardCommand);
+
+				mProcessSendControlCommand = new ProcessSendControlCommand(
+						FragmentRemoteControl.this, senderData,
+						FragmentControl.mDatagramSoc,
+						FragmentControl.mConnectedServerIP);
+				mProcessSendControlCommand.execute();
+			}
+		});
+
+		btnTimer.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (btnTimer.getText().toString().trim().equals("Start timer")) {
+					chronometer.setBase(SystemClock.elapsedRealtime());
+					chronometer.start();
+					btnTimer.setText("Stop timer");
+				} else {
+					chronometer.stop();
+					btnTimer.setText("Start timer");
+				}
+
+			}
+		});
 	}
 
 	// For open keyboard
@@ -497,12 +610,20 @@ public class FragmentRemoteControl extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		// show option menu
+		MainActivity.mIsHiddenMenu = false;
+		getActivity().invalidateOptionsMenu();
 
 		// hide ActionBar when display FragmentRemoteControl
-		ActionBar actionBar = ((ActionBarActivity) getActivity())
-				.getSupportActionBar();
-		actionBar.hide();
+		/*
+		 * ActionBar actionBar = ((ActionBarActivity) getActivity())
+		 * .getSupportActionBar(); actionBar.hide();
+		 */
+		
+		// disable navigation drawer
 		((MainActivity) getActivity()).disableSlidingNavigationDrawer();
+		((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
 
 		receiveMaintainedConnection();
 
@@ -531,6 +652,9 @@ public class FragmentRemoteControl extends Fragment {
 
 	@Override
 	public void onPause() {
+		MainActivity.mIsHiddenMenu = true;
+		getActivity().invalidateOptionsMenu();
+
 		cancelCheckMaintainedConnection();
 		cancelSendMaintainedConnection();
 		cancelReceiveMaintainedConnection();
@@ -538,8 +662,12 @@ public class FragmentRemoteControl extends Fragment {
 		closeVirtualKeyboard();
 
 		// show ActionBar when close FragmentRemoteControl
-		((ActionBarActivity) getActivity()).getSupportActionBar().show();
+		/* ((ActionBarActivity) getActivity()).getSupportActionBar().show(); */
+		
+		// enable navigation drawer
 		((MainActivity) getActivity()).enableSlidingNavigationDrawer();
+		((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
 		super.onPause();
 	}
@@ -572,4 +700,53 @@ public class FragmentRemoteControl extends Fragment {
 			mProcessReceiveMaintainedConnection.execute();
 	}
 
+	public void changeMode() {
+		if (linearLayoutEssentialMode.getVisibility() == View.VISIBLE) {
+			linearLayoutEssentialMode.setVisibility(View.GONE);
+			linearLayoutPowerpointMode.setVisibility(View.VISIBLE);
+		} else {
+			linearLayoutEssentialMode.setVisibility(View.VISIBLE);
+			linearLayoutPowerpointMode.setVisibility(View.GONE);
+		}
+	}
+	
+	public void sendPressRight()
+	{
+		if (linearLayoutPowerpointMode.getVisibility() == View.GONE)
+			return;
+		command = KeyboardConstant.KEYBOARD_COMMAND;
+		KeyboardCommand keyboardCommand = new KeyboardCommand();
+		keyboardCommand.setKeyboardCode(KeyboardConstant.VK_RIGHT);
+		keyboardCommand.setPress(KeyboardConstant.PRESS);
+
+		SenderData senderData = new SenderData();
+		senderData.setCommand(command);
+		senderData.setData(keyboardCommand);
+
+		mProcessSendControlCommand = new ProcessSendControlCommand(
+				FragmentRemoteControl.this, senderData,
+				FragmentControl.mDatagramSoc,
+				FragmentControl.mConnectedServerIP);
+		mProcessSendControlCommand.execute();
+	}
+	
+	public void sendPressLeft()
+	{
+		if (linearLayoutPowerpointMode.getVisibility() == View.GONE)
+			return;
+		command = KeyboardConstant.KEYBOARD_COMMAND;
+		KeyboardCommand keyboardCommand = new KeyboardCommand();
+		keyboardCommand.setKeyboardCode(KeyboardConstant.VK_LEFT);
+		keyboardCommand.setPress(KeyboardConstant.PRESS);
+
+		SenderData senderData = new SenderData();
+		senderData.setCommand(command);
+		senderData.setData(keyboardCommand);
+
+		mProcessSendControlCommand = new ProcessSendControlCommand(
+				FragmentRemoteControl.this, senderData,
+				FragmentControl.mDatagramSoc,
+				FragmentControl.mConnectedServerIP);
+		mProcessSendControlCommand.execute();
+	}
 }
