@@ -87,9 +87,11 @@ public class ProcessReceiveMaintainedConnection extends
 		String command = mSenderData.getCommand();
 
 		if (command.equals(SocketConstant.MAINTAIN_CONNECTION)) {
+			if (mContext == null) 
+				return;
 			Fragment f = mContext.getActivity().getSupportFragmentManager()
 					.findFragmentById(R.id.content_frame);
-			if (f instanceof FragmentRemoteControl) { // bật cờ duy trì
+			if (f != null && f instanceof FragmentRemoteControl) { // bật cờ duy trì
 														// connection
 				FragmentControl.mIsMaintainedConnection = true;
 			}

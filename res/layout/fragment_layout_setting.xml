@@ -9,15 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="false"
+        android:text="Mouse buttons"
         android:textColor="@color/MainColor"
-        android:text="Mouse buttons" />
+        android:textStyle="bold" />
 
     <Switch
         android:id="@+id/swAutoRotate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Auto rotate"
         android:textColor="@color/MainColor"
-        android:text="Auto rotate" />
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pointer speed"
-            android:textColor="@color/MainColor" />
+            android:textColor="@color/MainColor"
+            android:textStyle="bold" />
 
         <SeekBar
             android:id="@+id/sbPointerSpeed"
@@ -48,7 +51,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Scrolling speed"
-            android:textColor="@color/MainColor" />
+            android:textColor="@color/MainColor"
+            android:textStyle="bold" />
 
         <SeekBar
             android:id="@+id/sbScrollingSpeed"
@@ -59,12 +63,40 @@
             android:max="9" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnChangeTouchpadBackground"
-        style="@style/button_virtual"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Change touchpad background" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Touchpad background"
+            android:textColor="@color/MainColor"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tvTouchpadBackgroundName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="mixed_blue_white"
+                android:textColor="@color/MainColor" />
+
+            <Button
+                android:id="@+id/btnChangeTouchpadBackground"
+                style="@style/button_virtual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Change" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

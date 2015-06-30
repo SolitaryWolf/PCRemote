@@ -6,7 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
-    
     <string name="app_loading">Loading</string>
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
@@ -145,5 +144,7 @@
         <item>Ping/connect (default)</item>
         <item>DNS requests</item>
     </string-array>
+
+    <string name="title_activity_image_slider">ImageSliderActivity</string>
 
 </resources>

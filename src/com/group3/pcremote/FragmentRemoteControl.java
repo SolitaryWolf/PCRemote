@@ -121,7 +121,13 @@ public class FragmentRemoteControl extends Fragment {
 		txtKeyPress.setBackgroundColor(Color.TRANSPARENT);
 		relativeLayoutTouchpad = (RelativeLayout) rootView
 				.findViewById(R.id.relativeLayoutTouchpad);
-
+		
+		for (int i = 0 ; i < FragmentControl.sALTouchpadBackgroundDetail.size() ; i++)
+		{
+			if (FragmentControl.sALTouchpadBackgroundDetail.get(i).getImgName().equals(FragmentControl.sTouchpadBackground))
+				linearLayoutEssentialMode.setBackgroundResource(FragmentControl.sALTouchpadBackgroundDetail.get(i).getImgId());
+		}
+		
 		// powerpoint mode
 		linearLayoutPowerpointMode = (LinearLayout) rootView
 				.findViewById(R.id.linearLayoutPowerpointMode);

@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+	
+    <!-- Essential mode -->
     <LinearLayout
         android:id="@+id/linearLayoutEssentialMode"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/touchpad"
+        android:background="@drawable/mixed_blue_white"
         android:orientation="vertical" >
 
         <RelativeLayout
@@ -94,7 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
+	
+    <!-- Powerpoint mode -->
     <LinearLayout
         android:id="@+id/linearLayoutPowerpointMode"
         android:layout_width="match_parent"
